@@ -1,2 +1,3 @@
 # library02_rs
-library for contest
+AtCoder上でのコンテスト用のライブラリ
+AtCoderの環境を想定している(特にitertoolsやac-library-rsなどは積極的に使う.)
