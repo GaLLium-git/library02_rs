@@ -90,31 +90,9 @@ impl<T> Shift2D<T> for Vec<Vec<T>>
     }
 
  //bsearch
-pub trait BinarySearch<T> {
-    fn bsearch<F>(&self, f: F) -> usize
-    where
-        F: Fn(&T) -> bool;
-  }
-impl<T> BinarySearch<T> for Vec<T>{
-     fn bsearch<F>(&self, f: F) -> usize
-     where
-        F: Fn(&T) -> bool, 
-      {
-        let mut left =0; 
-        let mut right = self.len();
-        while left!=right {
-          let mid = left + (right - left) / 2;
-          if f(&self[mid]) {right = mid;}
-          else {left = mid+1;}
-        }
-        left
-      }  
-    }
-   
-
-pub fn bsearch_irange<F>(mut l: i64, mut r: i64, f: F) -> i64
+pub fn bsearch_irange<F>(mut l: usize, mut r: usize, f: F) -> usize
 where
-    F: Fn(i64) -> bool,
+    F: Fn(usize) -> bool,
 {
     while l < r {
         let m = l + (r - l) / 2;
