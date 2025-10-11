@@ -1,3 +1,6 @@
+/* from
+https://github.com/GaLLium-git/library02_rs/edit/main/template.rs
+*/
 #![allow(unused)]
 #![allow(non_snake_case)]
 #![allow(dead_code)]
