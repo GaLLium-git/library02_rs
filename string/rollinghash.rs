@@ -2,14 +2,13 @@ fn main(){
 }
 
 pub struct RollingHash {
-    base: u64,
-    mod1:u32,
-    mod2:u32,
-    hash1: Vec<StaticModInt<mod1>>,
-    hash2: Vec<StaticModInt<mod2>>,
+    hash1: Vec<StaticModInt>,
+    hash2: Vec<StaticModInt>,
 }
 
 impl RollingHash {
+    const MOD1=1000000007;
+    const MOD2=998244353;
     pub fn new(s: &Vec<char>, base: u64) -> Self {
         let n = s.len();
         let mut hash1 = vec![0; n + 1];
@@ -29,9 +28,9 @@ impl RollingHash {
         }
     }
 
-    pub fn hash(&self, l: usize, r: usize) -> (StaticModInt<mod1>,StaticModInt<mod2>) {
-        let res1=hash1[r-1]-hash1[l-1]*StaticModInt<mod1>::new(base).pow(r-l);
-        let res2=hash2[r-1]-hash2[l-1]*StaticModInt<mod2>::new(base).pow(r-l);
+    pub fn hash(&self, l: usize, r: usize) -> (StaticModInt<MOD1>,StaticModInt<MOD2>) {
+        let res1=hash1[r-1]-hash1[l-1]*StaticModInt<MOD1>::new(BASE).pow(r-l);
+        let res2=hash2[r-1]-hash2[l-1]*StaticModInt<MOD2>::new(BASE).pow(r-l);
         (res1,res2)
     }
 
