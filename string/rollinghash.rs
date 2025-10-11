@@ -10,7 +10,7 @@ pub fn rolling_hash(s:&Vec<char>,base:ModInt)->Vec<ModInt>{
 
 fn main() {
     let mut sc=Scanner::new();
-    type ModInt = ac_library::ModInt1000000007;
+    type ModInt = ac_library::StaticModInt<1000000000000000009>;
     let n:usize=sc.next();
     let mut s:Vec<char>=sc.next::<String>().chars().collect();s.shift();
     // use rand::Rng;
