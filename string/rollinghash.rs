@@ -1,49 +1,38 @@
-pub fn rolling_hash(s:&Vec<char>,base:ModInt)->Vec<ModInt>{
-    let mut ret=vec![ModInt::new(0);s.len()];
-    ret[0]=ModInt::new(s[0] as usize);
-    for i in 1..s.len(){
-        ret[i]=ret[i-1]*base+ ModInt::new(s[i] as usize);
-    }
-    ret
+fn main(){
 }
 
+pub struct RollingHash {
+    base: u64,
+    mod1:u32,
+    mod2:u32,
+    hash1: Vec<StaticModInt<mod1>>,
+    hash2: Vec<StaticModInt<mod2>>,
+}
 
-fn main() {
-    let mut sc=Scanner::new();
-    type ModInt = ac_library::StaticModInt<1000000000000000009>;
-    let n:usize=sc.next();
-    let mut s:Vec<char>=sc.next::<String>().chars().collect();s.shift();
-    // use rand::Rng;
-    let mut rng = rand::thread_rng();
-    let base=ModInt::new(rng.gen_range(1000..=100_000) | 1) ;
-    let rori=rolling_hash(&s,base);
-  
-    let check = |k: usize| -> bool {
-    let mut seen: HashMap<usize, usize> = HashMap::new(); 
-    for l in 1..=n-k+1 {
-        let r = l+k-1;
-        let hash = (rori[r] - rori[l - 1] * base.pow(k)).val;
-        if let Some(&prev_l) = seen.get(&hash) {
-            if prev_l + k - 1 < l {
-                return  false;
-            }
-        } else {
-            seen.insert(hash, l);
+impl RollingHash {
+    pub fn new(s: &Vec<char>, base: u64) -> Self {
+        let n = s.len();
+        let mut hash1 = vec![0; n + 1];
+        
+        for i in 0..n{
+            hash1[i + 1] = (hash1[i] * base + s[i] as usize
+        }
+        for (i, c) in s.bytes().enumerate() {
+            hash[i + 1] = (hash[i] * base + c as u64) % modulo;
+            power[i + 1] = (power[i] * base) % modulo;
+        }
+
+        RollingHash {
+            base,
+            hash1,
+            hash2,
         }
     }
 
-    true
-    };
+    pub fn hash(&self, l: usize, r: usize) -> (StaticModInt<mod1>,StaticModInt<mod2>) {
+        let res1=hash1[r-1]-hash1[l-1]*StaticModInt<mod1>::new(base).pow(r-l);
+        let res2=hash2[r-1]-hash2[l-1]*StaticModInt<mod2>::new(base).pow(r-l);
+        (res1,res2)
+    }
 
-    let ans=bsearch_irange(0,n+1,check)-1;
-    println!("{}",ans);
-}
-
-
-
-
-
-  
-    let ans=bsearch_irange(0,(n+1) as i64,check)-1;
-    println!("{}",ans);
 }
