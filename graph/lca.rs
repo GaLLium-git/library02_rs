@@ -7,7 +7,7 @@ fn main(){
         graph[x].push(y);
         graph[y].push(x);
     }
-    let mut lc=LCA::new(graph);
+    let mut lc=LCA::new(&graph);
     lc.init(1);
     let Q:usize=sc.next();
     for _ in 0..Q{
@@ -24,10 +24,10 @@ struct LCA {
 }
 
 impl LCA {
-    pub fn new(graph :Vec<Vec<usize>>) -> Self {
+    pub fn new(graph :&Vec<Vec<usize>>) -> Self {
         let n=graph.len();
         LCA {
-            graph,
+            graph:graph.clone(),
             parent: vec![vec![None;n];(n.ilog2()+2) as usize],
             depth: vec![0;n],
         }
@@ -79,3 +79,5 @@ impl LCA {
         self.parent[0][u].unwrap()
     }
 }
+
+
