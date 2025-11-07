@@ -10,7 +10,7 @@ fn main(){
 
 use ac_library::Monoid;
 pub struct SparseTable<M:Monoid>{
-    data: Vec<Vec<M::S>>;
+    data: Vec<Vec<M::S>>,
 }
 
 impl<M:Monoid> SparseTable<M>{
@@ -53,14 +53,14 @@ impl<M:Monoid> SparseTable<M>{
         };
         let mut l = match range.start_bound() {
             std::ops::Bound::Included(l) => *l,
-            std::opd::Bound::Excluded(l) => l + 1,
+            std::ops::Bound::Excluded(l) => l + 1,
         };
         
         if l==r{
-            return data[0][l];
+            return self.data[0][l];
         } else {
             let d=((l^r).ilog2() +1) as usize;
-            return M::binary_operation(&data[d][l],&data[d][r]);
+            return M::binary_operation(&self.data[d][l],&self.data[d][r]);
         }
     }
 }
