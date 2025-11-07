@@ -21,8 +21,26 @@ impl<M:Monoid> SparseTable<M>{
         for i in 0..val.len(){
             data[0][i]=val[i];
         }
-        for d in 1..=log{
-            //todo:d段目の累積処理
+        
+        for i in 1..=log{
+            //i段目の累積処理
+            for pa in 0..(1<<(log-i)){
+                let (left,right)=(pa*(1<<i),(pa+1)*(1<<i)); //区間[l,r) を担当
+                let mid=(left+right)/2; //累積の始点の仕切りの右側
+                
+                //右方向への累積
+                let accr=M::identity();
+                for j in mid..right{
+                    accr=M::binary_operation(&accr,&val[j]);
+                    data[i][j]=accr;
+                }
+                //左方向への累積
+                let accl=M::identity();
+                for j in (left..mid).rev(){
+                    accl=M::binary_operation(&accl,val[j]);
+                    data[i][j]=accl;
+                }
+            }
         }
         
         Self{data}
@@ -46,4 +64,3 @@ impl<M:Monoid> SparseTable<M>{
         }
     }
 }
-
