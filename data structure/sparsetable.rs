@@ -19,7 +19,7 @@ impl<M:Monoid> SparseTable<M>{
         let size=(1<<log);
         let mut data=vec![vec![M::identity();size];log+1]; //i段目は分割幅2^i
         for i in 0..val.len(){
-            data[0][i]=val[i];
+            data[0][i]=val[i].clone();
         }
         
         for i in 1..=log{
@@ -29,16 +29,16 @@ impl<M:Monoid> SparseTable<M>{
                 let mid=(left+right)/2; //累積の始点の仕切りの右側
                 
                 //右方向への累積
-                let accr=M::identity();
+                let mut accr=M::identity();
                 for j in mid..right{
                     accr=M::binary_operation(&accr,&val[j]);
-                    data[i][j]=accr;
+                    data[i][j]=accr.clone();
                 }
                 //左方向への累積
-                let accl=M::identity();
+                let mut accl=M::identity();
                 for j in (left..mid).rev(){
                     accl=M::binary_operation(&accl,&val[j]);
-                    data[i][j]=accl;
+                    data[i][j]=accl.clone();
                 }
             }
         }
@@ -59,7 +59,7 @@ impl<M:Monoid> SparseTable<M>{
         };
         
         if l==r{
-            return self.data[0][l];
+            return self.data[0][l].clone();
         } else {
             let d=((l^r).ilog2() +1) as usize;
             return M::binary_operation(&self.data[d][l],&self.data[d][r]);
