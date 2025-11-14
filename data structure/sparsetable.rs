@@ -1,6 +1,6 @@
 fn main(){
     let v:Vec<usize>=vec![0,3,5,6,4,4,7];
-    let sp=SparseTable::<BitwiseOr<usize>>::new(&v);
+    let sp=SparseTable::<ac_library::Max<usize>>::new(&v);
     
     println!("prod 2..6 ={}",sp.prod(2..6));
     println!("prod 5..=5 ={}",sp.prod(5..=5));
@@ -37,7 +37,7 @@ impl<M:Monoid> SparseTable<M>{
                 //左方向への累積
                 let accl=M::identity();
                 for j in (left..mid).rev(){
-                    accl=M::binary_operation(&accl,val[j]);
+                    accl=M::binary_operation(&accl,&val[j]);
                     data[i][j]=accl;
                 }
             }
@@ -46,14 +46,16 @@ impl<M:Monoid> SparseTable<M>{
         Self{data}
     }
     
-    fn prod(&self,range: impl std::ops::RangeBounds)->M::S{
+    fn prod(&self,range: impl std::ops::RangeBounds<usize>)->M::S{
         let mut r = match range.end_bound() {
             std::ops::Bound::Included(r) => r + 1,
             std::ops::Bound::Excluded(r) => *r,
+            std::ops::Bound::Unbounded => self.data.len(),
         };
         let mut l = match range.start_bound() {
             std::ops::Bound::Included(l) => *l,
             std::ops::Bound::Excluded(l) => l + 1,
+            std::ops::Bound::Unbounded => 0,
         };
         
         if l==r{
