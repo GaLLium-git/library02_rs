@@ -31,13 +31,13 @@ impl<M:Monoid> SparseTable<M>{
                 //右方向への累積
                 let mut accr=M::identity();
                 for j in mid..right{
-                    accr=M::binary_operation(&accr,&val[j]);
+                    accr=M::binary_operation(&accr,&data[0][j]);
                     data[i][j]=accr.clone();
                 }
                 //左方向への累積
                 let mut accl=M::identity();
                 for j in (left..mid).rev(){
-                    accl=M::binary_operation(&accl,&val[j]);
+                    accl=M::binary_operation(&accl,&data[0][j]);
                     data[i][j]=accl.clone();
                 }
             }
@@ -48,9 +48,9 @@ impl<M:Monoid> SparseTable<M>{
     
     fn prod(&self,range: impl std::ops::RangeBounds<usize>)->M::S{
         let mut r = match range.end_bound() {
-            std::ops::Bound::Included(r) => r + 1,
-            std::ops::Bound::Excluded(r) => *r,
-            std::ops::Bound::Unbounded => self.data.len(),
+            std::ops::Bound::Included(r) => *r,
+            std::ops::Bound::Excluded(r) => r - 1,
+            std::ops::Bound::Unbounded => self.data[0].len() - 1,
         };
         let mut l = match range.start_bound() {
             std::ops::Bound::Included(l) => *l,
