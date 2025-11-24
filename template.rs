@@ -30,23 +30,13 @@ impl Scanner {
             buffer: std::collections::VecDeque::new(),
         }
     }
-
-    fn read_line(&mut self) {
-        let mut input = String::new();
-        std::io::stdin().read_line(&mut input).unwrap();
-        self.buffer = input
-            .split_whitespace()
-            .map(|s| s.to_string())
-            .collect();
-    }
-
     pub fn next<T: std::str::FromStr>(&mut self) -> T {
-        loop {
-            if let Some(token) = self.buffer.pop_front() {
-                return token.parse::<T>().ok().unwrap();
-            }
-            self.read_line();
+        if buffer.len() == 0 {
+            let mut input = String::new();
+            std::io::stdin().read_line(&mut input).unwrap();
+            self.buffer = input.split_whitespace().map(|s| s.to_string()).collect();
         }
+        self.buffer.pop_front().parse::<T>().unwrap();
     }
 }
 
