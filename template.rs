@@ -26,9 +26,7 @@ pub struct Scanner {
 }
 impl Scanner {
     pub fn new() -> Self {
-        Scanner {
-            buffer: std::collections::VecDeque::new(),
-        }
+        Scanner {buffer: std::collections::VecDeque::new()}
     }
     pub fn next<T: std::str::FromStr>(&mut self) -> T {
         if buffer.len() == 0 {
