@@ -4,10 +4,11 @@ fn main(){
     
     eprintln!("{:?}",(A.clone()+B.clone()).seq);
     eprintln!("{:?}",(A.clone()*B.clone()).seq);
+    eprintln!("{:?}",(A.clone()*Mint::new(-1)).seq);
 }
 
 
-//多項式ライブラリ
+//母関数ライブラリ
 type Mint = ac_library::ModInt998244353;
 const MAX_DEG:usize = 1000000; //数列の長さは1e6で打ち切る
 
@@ -22,7 +23,10 @@ impl Poly{
     }
 }
 
-impl std::ops::Add for Poly{
+
+use std::ops::{Add,Sub,Mul,Div};
+//和 O(N)
+impl Add for Poly{
     type Output = Self;
     fn add(self, rhs:Self) -> Self {
         let len = self.seq.len().max(rhs.seq.len());
@@ -39,7 +43,20 @@ impl std::ops::Add for Poly{
     }
 }
 
-impl std::ops::Mul for Poly{
+//定数倍 O(N) f*cの形のみ可
+impl Mul<Mint> for Poly{
+    type Output = Self;
+    fn mul(self, c:Mint) -> Self {
+        let mut res = self.seq;
+        for i in 0..res.len(){
+            res[i] *= c;
+        }
+        Self{seq: res}
+    }
+}
+
+//積 O(NlogN)
+impl Mul for Poly{
     type Output = Self;
     fn mul(self, rhs:Self) -> Self {
         let mut res = ac_library::convolution(&self.seq,&rhs.seq);
