@@ -10,7 +10,7 @@ fn main(){
 
 //多項式ライブラリ
 type Mint = ac_library::ModInt998244353;
-const MAX_DEG:usize = 1000000; //数列の長さは1e6で打ち切る
+const MAX_DEG:usize = 1000000; //次数は < 1e6 で打ち切る
 
 #[derive(Clone,PartialEq,Eq)]
 pub struct Poly{
