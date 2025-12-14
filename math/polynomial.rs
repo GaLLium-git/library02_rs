@@ -1,18 +1,15 @@
-fn main(){
-    let A = Poly::new(vec![Mint::new(1),Mint::new(2),Mint::new(3)]); //1 + 2x + 3x^2
-    let B = Poly::new(vec![Mint::new(4),Mint::new(5)]); //4 + 5x
+fn main() {
+    let mut sc=Scanner::new();
+    let N:usize=sc.next();
+    let A:Vec<Mint>=(0..N).map(|_| sc.next()).collect();
     
-    eprintln!("A={:?},B={:?}",A,B);
-    eprintln!("A+B={:?}",A.clone()+B.clone()); 
-    eprintln!("A-B={:?}",A.clone()-B.clone());
-    eprintln!("A*B={:?}",A.clone()*B.clone());
-    eprintln!("A/B={:?}",A.clone()/B.clone());
-    eprintln!("A'={:?}",A.clone().bibun());
-    eprintln!("∫A={:?}",A.clone().sekibun());
-    eprintln!("log A={:?}",A.clone().log());
-    eprintln!("A(2)={}",A.clone().assign(Mint::new(2)));
+    let mut ans = Poly::new(A).inv().seq;
+    ans.truncate(N);
+    
+    for &val in ans.iter(){
+        print!("{} ",val);
+    }
 }
-
 
 //多項式ライブラリ
 type Mint = ac_library::ModInt998244353;
