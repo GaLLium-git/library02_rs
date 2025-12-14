@@ -3,7 +3,7 @@ fn main() {
     let N:usize=sc.next();
     let A:Vec<Mint>=(0..N).map(|_| sc.next()).collect();
     
-    let mut ans = Poly::new(A).inv().seq;
+    let mut ans = Poly::new(A).exp().seq;
     ans.truncate(N);
     
     for &val in ans.iter(){
@@ -48,8 +48,12 @@ impl Poly{
     //積分 O(N)
     fn sekibun(self) -> Self{
         let mut res = vec![Mint::new(0)];
+        let mut inv = vec![Mint::new(1);self.seq.len() + 3]; //逆元の列挙
+        for i in 2..inv.len(){
+            inv[i] = -Mint::new(998244353/i) * inv[998244353%i];
+        }
         for i in 0..self.seq.len(){
-            res.push(self.seq[i] / Mint::new(i+1));
+            res.push(self.seq[i] * inv[i+1]);
         }
         res.truncate(MAX_DEG);
         Self{seq: res}
