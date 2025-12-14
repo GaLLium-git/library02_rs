@@ -25,15 +25,15 @@ impl Poly{
     }
     
     //前N項を残す
-    fn truncate(self,N:usize) -> Self {
-        let mut res = self.seq;
+    fn truncate(&self,N:usize) -> Self {
+        let mut res = self.seq.clone();
         res.truncate(N);
         Self{seq: res}
     }
     
     //定数倍 O(N)
-    fn mul_const(self, c:Mint) -> Self {
-        let mut res = self.seq;
+    fn mul_const(&self, c:Mint) -> Self {
+        let mut res = self.seq.clone();
         for i in 0..res.len(){
             res[i] *= c;
         }
@@ -42,16 +42,16 @@ impl Poly{
     
 
     //逆元の前N項 O(NlogN)
-    fn inv(self,N:usize) -> Self{
+    fn inv(&self,N:usize) -> Self{
         let mut res = Poly::new(vec![Mint::new(1)/self.seq[0]]);
         for i in 1..=N.ilog2()+1{
-            res = (res.clone()*(Poly::new(vec![Mint::new(2)]) - res.clone()*self.clone().truncate(1<<i))).truncate(1<<i);
+            res = (res.clone()*(Poly::new(vec![Mint::new(2)]) - res.clone()*self.truncate(1<<i))).truncate(1<<i);
         }
         res.truncate(N)
     }
     
     //微分 O(N)
-    fn bibun(self) -> Self{
+    fn bibun(&self) -> Self{
         let mut res = vec![];
         for i in 1..self.seq.len(){
             res.push(self.seq[i]*Mint::new(i));
@@ -60,7 +60,7 @@ impl Poly{
     }
     
     //積分 O(N)
-    fn sekibun(self) -> Self{
+    fn sekibun(&self) -> Self{
         let mut res = vec![Mint::new(0)];
         let mut modinv = vec![Mint::new(1);self.seq.len() + 3]; //逆元の列挙
         for i in 2..modinv.len(){
@@ -72,28 +72,28 @@ impl Poly{
         Self{seq: res}
     }
     
-    //logの前N項 O(NlogN)
-    fn log(self,N:usize) -> Self{
-        let mut res = (self.clone().truncate(N+1).bibun() * self.clone().inv(N)).sekibun();
+    //logの前N項 O(NlogN) 定数項が1
+    fn log(&self,N:usize) -> Self{
+        let mut res = (self.truncate(N+1).bibun() * self.inv(N)).sekibun();
         res.truncate(N)
     }
     
-    //expの前N項 O(NlogN) f(0)=0
-    fn exp(self,N:usize) -> Self{
+    //expの前N項 O(NlogN) 定数項が0
+    fn exp(&self,N:usize) -> Self{
         let mut res = Poly::new(vec![Mint::new(1)]);
         for i in 1..=N.ilog2()+1{
-            res = res.clone()*(Poly::new(vec![Mint::new(1)]) - res.clone().log(1<<i) + self.clone().truncate(1<<i)).truncate(1<<i);
+            res = res.clone()*(Poly::new(vec![Mint::new(1)]) - res.clone().log(1<<i) + self.truncate(1<<i)).truncate(1<<i);
         }
         res.truncate(N)
     }
     
-    //累乗の前N項 O(NlogN)
-    fn pow(self, k:i64,N:usize) -> Self{
+    //累乗の前N項 O(NlogN) 定数項が1
+    fn pow(&self, k:i64,N:usize) -> Self{
         (self.log(N).mul_const(Mint::new(k))).exp(N) 
     }
     
     //値の代入 O(N)
-    fn assign(self,c:Mint) -> Mint{
+    fn assign(&self,c:Mint) -> Mint{
         let mut res = Mint::new(0);
         let mut pow = Mint::new(1);
         for i in 0..self.seq.len(){
@@ -103,7 +103,7 @@ impl Poly{
         res
     }
     
-    fn taylor_shift(self,c:Mint){
+    fn taylor_shift(&self,c:Mint){
         
     }
 }
@@ -139,4 +139,4 @@ impl Mul for Poly{
         let mut res = ac_library::convolution(&self.seq,&rhs.seq);
         Self{seq: res}
     }
-}
+               }
