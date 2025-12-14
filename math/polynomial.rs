@@ -28,15 +28,11 @@ impl Poly{
         Self{seq}
     }
     
-    fn zero() -> Self{
-        Self{seq:vec![Mint::new(0)]}
-    }
-    
     //多項式逆元 O(NlogN)
     fn inv(self) -> Self{
         let mut res = Poly::new(vec![Mint::new(1)/self.seq[0]]);
         for i in 1..=MAX_DEG.ilog2()+1{
-            res = res.clone()*Mint::new(2) - self.clone()*res.clone()*res.clone();
+            res = res.clone()*(Poly::new(vec![Mint::new(2)]) - res.clone()*self.clone());
             res.seq.truncate(1<<i);
         }
         res.seq.truncate(MAX_DEG);
@@ -67,13 +63,19 @@ impl Poly{
         (self.clone().bibun() / self.clone()).sekibun()
     }
     
-    //多項式のexp O(NlogN)
+    //多項式のexp O(NlogN) f(0)=0
     fn exp(self) -> Self{
-        Self::zero()
+        let mut res = Poly::new(vec![Mint::new(1)]);
+        for i in 1..=MAX_DEG.ilog2()+1{
+            res = res.clone()*(Poly::new(vec![Mint::new(1)]) - res.clone().log() + self.clone());
+            res.seq.truncate(1<<i);
+        }
+        res.seq.truncate(MAX_DEG);
+        res 
     }
     
     //累乗 O(NlogN)
-    fn pow(self, n:usize) -> Self{
+    fn pow(self, n:i64) -> Self{
         (self.log() * Mint::new(n)).exp() 
     }
     
@@ -88,8 +90,8 @@ impl Poly{
         res
     }
     
-    fn taylor_shift(self,c:Mint) -> Self{
-        Self::zero()
+    fn taylor_shift(self,c:Mint){
+        
     }
 }
 
