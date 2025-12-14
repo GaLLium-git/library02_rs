@@ -75,12 +75,8 @@ impl Add for Poly{
         let len = self.seq.len().max(rhs.seq.len());
         let mut res = vec![Mint::new(0);len];
         for i in 0..len {
-            if i < self.seq.len() {
-                res[i] += self.seq[i];
-            }
-            if i < rhs.seq.len() {
-                res[i] += rhs.seq[i];
-            }
+            if i < self.seq.len() { res[i] += self.seq[i];}
+            if i < rhs.seq.len() { res[i] += rhs.seq[i];}
         }
         Self{seq: res}
     }
