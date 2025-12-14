@@ -35,8 +35,9 @@ impl Poly{
     //多項式逆元 O(NlogN)
     fn inv(self) -> Self{
         let mut res = Poly::new(vec![Mint::new(1)/self.seq[0]]);
-        for _ in 0..=MAX_DEG.ilog2(){
+        for i in 1..=MAX_DEG.ilog2()+1{
             res = res.clone()*Mint::new(2) - self.clone()*res.clone()*res.clone();
+            res.seq.truncate(1<<i);
         }
         res.seq.truncate(MAX_DEG);
         res 
