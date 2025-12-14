@@ -13,7 +13,6 @@ fn main() {
 
 //多項式ライブラリ
 type Mint = ac_library::ModInt998244353;
-const MAX_DEG:usize = 1000000; //次数は < 1e6 で打ち切る
 
 #[derive(Clone,Debug,PartialEq,Eq)]
 pub struct Poly{
@@ -25,15 +24,30 @@ impl Poly{
         Self{seq}
     }
     
-    //多項式逆元 O(NlogN)
-    fn inv(self) -> Self{
-        let mut res = Poly::new(vec![Mint::new(1)/self.seq[0]]);
-        for i in 1..=MAX_DEG.ilog2()+1{
-            res = res.clone()*(Poly::new(vec![Mint::new(2)]) - res.clone()*self.clone());
-            res.seq.truncate(1<<i);
+    //前N項を残す
+    fn truncate(self,N:usize) -> Self {
+        let mut res = self.seq;
+        res.truncate(N);
+        Self{seq: res}
+    }
+    
+    //定数倍 O(N)
+    fn mul_const(self, c:Mint) -> Self {
+        let mut res = self.seq;
+        for i in 0..res.len(){
+            res[i] *= c;
         }
-        res.seq.truncate(MAX_DEG);
-        res 
+        Self{seq: res}
+    }
+    
+
+    //逆元の前N項 O(NlogN)
+    fn inv(self,N:usize) -> Self{
+        let mut res = Poly::new(vec![Mint::new(1)/self.seq[0]]);
+        for i in 1..=N.ilog2()+1{
+            res = (res.clone()*(Poly::new(vec![Mint::new(2)]) - res.clone()*self.clone().truncate(1<<i))).truncate(1<<i);
+        }
+        res.truncate(N)
     }
     
     //微分 O(N)
@@ -48,36 +62,34 @@ impl Poly{
     //積分 O(N)
     fn sekibun(self) -> Self{
         let mut res = vec![Mint::new(0)];
-        let mut inv = vec![Mint::new(1);self.seq.len() + 3]; //逆元の列挙
-        for i in 2..inv.len(){
-            inv[i] = -Mint::new(998244353/i) * inv[998244353%i];
+        let mut modinv = vec![Mint::new(1);self.seq.len() + 3]; //逆元の列挙
+        for i in 2..modinv.len(){
+            modinv[i] = -Mint::new(998244353/i) * modinv[998244353%i];
         }
         for i in 0..self.seq.len(){
-            res.push(self.seq[i] * inv[i+1]);
+            res.push(self.seq[i] * modinv[i+1]);
         }
-        res.truncate(MAX_DEG);
         Self{seq: res}
     }
     
-    //多項式のlog O(NlogN)
-    fn log(self) -> Self{
-        (self.clone().bibun() / self.clone()).sekibun()
+    //logの前N項 O(NlogN)
+    fn log(self,N:usize) -> Self{
+        let mut res = (self.clone().truncate(N+1).bibun() * self.clone().inv(N)).sekibun();
+        res.truncate(N)
     }
     
-    //多項式のexp O(NlogN) f(0)=0
-    fn exp(self) -> Self{
+    //expの前N項 O(NlogN) f(0)=0
+    fn exp(self,N:usize) -> Self{
         let mut res = Poly::new(vec![Mint::new(1)]);
-        for i in 1..=MAX_DEG.ilog2()+1{
-            res = res.clone()*(Poly::new(vec![Mint::new(1)]) - res.clone().log() + self.clone());
-            res.seq.truncate(1<<i);
+        for i in 1..=N.ilog2()+1{
+            res = res.clone()*(Poly::new(vec![Mint::new(1)]) - res.clone().log(1<<i) + self.clone().truncate(1<<i)).truncate(1<<i);
         }
-        res.seq.truncate(MAX_DEG);
-        res 
+        res.truncate(N)
     }
     
-    //累乗 O(NlogN)
-    fn pow(self, n:i64) -> Self{
-        (self.log() * Mint::new(n)).exp() 
+    //累乗の前N項 O(NlogN)
+    fn pow(self, k:i64,N:usize) -> Self{
+        (self.log(N).mul_const(Mint::new(k))).exp(N) 
     }
     
     //値の代入 O(N)
@@ -116,19 +128,7 @@ impl Add for Poly{
 impl Sub for Poly{
     type Output = Self;
     fn sub(self, rhs:Self) -> Self {
-        self + rhs * Mint::new(-1)
-    }
-}
-
-//定数倍 O(N) f*cの形のみ可
-impl Mul<Mint> for Poly{
-    type Output = Self;
-    fn mul(self, c:Mint) -> Self {
-        let mut res = self.seq;
-        for i in 0..res.len(){
-            res[i] *= c;
-        }
-        Self{seq: res}
+        self + rhs.mul_const(Mint::new(-1))
     }
 }
 
@@ -137,15 +137,6 @@ impl Mul for Poly{
     type Output = Self;
     fn mul(self, rhs:Self) -> Self {
         let mut res = ac_library::convolution(&self.seq,&rhs.seq);
-        res.truncate(MAX_DEG);
         Self{seq: res}
-    }
-}
-
-//除法 O(NlogN);
-impl Div for Poly{
-    type Output = Self;
-    fn div(self, rhs:Self) -> Self {
-        self * rhs.inv()
     }
 }
