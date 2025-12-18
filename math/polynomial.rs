@@ -62,6 +62,18 @@ impl Poly{
         Self{seq: res}
     }
     
+    //減法 O(N)
+    fn sub(&self, rhs:&Self, N:usize) -> Self{
+        let mut res = vec![Mint::new(0);N];
+        for i in 0..N.min(self.seq.len()) {
+            res[i] += self.seq[i];
+        }
+        for i in 0..N.min(rhs.seq.len()) {
+            res[i] -= rhs.seq[i];
+        }
+        Self{seq: res}
+    }
+    
     //乗法 O(NlogN)
     fn mul(&self, rhs: &Self, N: usize) -> Self {
         let mut res = convolution(&self.seq[..self.seq.len().min(N)], &rhs.seq[..rhs.seq.len().min(N)]);
@@ -86,7 +98,7 @@ impl Poly{
             let mut L = N.min(res.seq.len()*2);
             let mut rhs = res.mul_const(Mint::new(-1)).mul(&self,L);
             rhs.seq[0] += Mint::new(2);
-            res = res.mul(&rhs,L);
+            res = res.mul(&rhs,L); // g = g(2-gf)
         }
         res
     }
@@ -127,7 +139,7 @@ impl Poly{
             let mut L = N.min(res.seq.len()*2);
             let mut rhs = res.log(L).mul_const(Mint::new(-1)).add(&self,L);
             rhs.seq[0] += Mint::new(1);
-            res = res.mul(&rhs,L);
+            res = res.mul(&rhs,L);  //g = g(1-log(g)+f)
         }
         res
     }
