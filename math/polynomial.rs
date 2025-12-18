@@ -145,7 +145,7 @@ impl Poly{
         res.seq.push(Mint::new(1));
         while res.seq.len() < N{
             //ニュートン法 g=g(1-log(g)+f) 精度preL -> L
-            //g(-log(g)+f)[preL..L] = (g * (-log(g)+f)[preL..L])[0..L-preL]をgに連結する
+            //g(-log(g)+f)[preL..L] = -(g * (log(g)-f)[preL..L])[0..L-preL]をgに連結する
             let preL = res.seq.len();
             let L = (preL*2).min(N);
             let mut rhs = res.log(L).sub(&self,L);
