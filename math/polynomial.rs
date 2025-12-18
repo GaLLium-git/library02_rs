@@ -69,9 +69,7 @@ impl Poly{
     
     //前N項を残す
     fn truncate(&self,N:usize) -> Self {
-        let mut res = self.seq.clone();
-        res.truncate(N);
-        Self{seq: res}
+        Self{seq: self.seq[..N.min(self.seq.len())].to_vec()}
     }
     
     //定数倍 O(N)
@@ -90,7 +88,7 @@ impl Poly{
         res.push(Mint::new(1)/self.seq[0]);
         while res.len() < N{
             let mut nex_len = N.min(res.len()*2);
-            let mut new = convolution(&convolution(&res,&res),&self.seq[..nex_len.min(self.seq.len())]);
+            let mut new = convolution(&convolution(&res,&res),&self.truncate(nex_len).seq);
             new.resize(nex_len,Mint::new(0));
             for i in res.len()..nex_len{
                 res.push(-new[i]);
