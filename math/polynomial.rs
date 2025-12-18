@@ -96,7 +96,8 @@ impl Poly{
         let mut res = Poly::new(Vec::with_capacity(N));
         res.seq.push(Mint::new(1)/self.seq[0]);
         while res.seq.len() < N{
-            // g = g(2-gf)
+            //ニュートン法 g=g(2-gf) 精度preL -> L
+            //-ggf[preL..L] = -(g * gf[preL..L])[0..L-preL]をgに連結する
             let preL = res.seq.len();
             let L = (preL*2).min(N);
             let mut rhs = res.mul(&self,L);
@@ -140,12 +141,19 @@ impl Poly{
     
     //expの前N項 O(NlogN) 定数項が0
     fn exp(&self,N:usize) -> Self{
-        let mut res = Poly::new(vec![Mint::new(1)]);
+        let mut res = Poly::new(Vec::with_capacity(N));
+        res.seq.push(Mint::new(1));
         while res.seq.len() < N{
-            let mut L = N.min(res.seq.len()*2);
+            //ニュートン法 g=g(1-log(g)+f) 精度preL -> L
+            //g(-log(g)+f)[preL..L] = (g * (-log(g)+f)[preL..L])[0..L-preL]をgに連結する
+            let preL = res.seq.len();
+            let L = (preL*2).min(N);
             let mut rhs = res.log(L).mul_const(Mint::new(-1)).add(&self,L);
-            rhs.seq[0] += Mint::new(1);
-            res = res.mul(&rhs,L);  //g = g(1-log(g)+f)
+            rhs.seq = rhs.seq[preL..L].to_vec();
+            let mut new = res.mul(&rhs,L-preL);
+            for i in 0..L-preL {
+                res.seq.push(new.seq[i]);
+            }
         }
         res
     }
