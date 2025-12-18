@@ -2,11 +2,6 @@
 #![allow(non_snake_case)]
 #![allow(dead_code)]
 
-use std::cell::RefCell;
-
-thread_local! {
-    static NTTCNT: RefCell<Vec<usize>> = RefCell::new(Vec::new());
-}
 
 fn main() {
     let mut sc=Scanner::new();
@@ -21,18 +16,6 @@ fn main() {
     ]);
     let mut ans = poly.pow(D,N);
     println!("{}",ans.seq[N-D]);
-
-    NTTCNT.with(|v| {
-        let mut a = v.borrow().clone();
-        a.sort();
-        println!("{:?}", a);
-
-        let mut op :f64= 0.0;
-        for &sz in a.iter(){
-            op += (sz as f64) * (sz as f64).log2();
-        }
-        println!("op={}",op);
-    });
 }
 
 // Scanner
@@ -74,9 +57,9 @@ impl Poly{
     
     //定数倍 O(N)
     fn mul_const(&self, c:Mint) -> Self {
-        let mut res = self.seq.clone();
-        for i in 0..res.len(){
-            res[i] *= c;
+        let mut res = vec![Mint::new(0);self.seq.len()];
+        for i in 0..self.seq.len(){
+            res[i] = self.seq[i] * c;
         }
         Self{seq: res}
     }
@@ -131,10 +114,10 @@ impl Poly{
         res.push(Mint::new(1));
         while res.len() < N{
             let mut nex_len = N.min(res.len()*2);
-            let mut new = convolution(&res,&(Poly::new(res.clone()).log(nex_len)-self.truncate(nex_len)).seq);
+            let mut new = convolution(&res,&(self.truncate(nex_len)-Poly::new(res.clone()).log(nex_len)).seq);
             new.resize(nex_len,Mint::new(0));
             for i in res.len()..nex_len{
-                res.push(-new[i]);
+                res.push(new[i]);
             }
         }
         Self {seq: res}
@@ -148,10 +131,9 @@ impl Poly{
     //値の代入 O(N)
     fn assign(&self,c:Mint) -> Mint{
         let mut res = Mint::new(0);
-        let mut pow = Mint::new(1);
         for i in 0..self.seq.len(){
-            res += self.seq[i]*pow;
-            pow *= c;
+            res *= c;
+            res += self.seq[i];
         }
         res
     }
@@ -181,7 +163,13 @@ impl Add for Poly{
 impl Sub for Poly{
     type Output = Self;
     fn sub(self, rhs:Self) -> Self {
-        self + rhs.mul_const(Mint::new(-1))
+        let len = self.seq.len().max(rhs.seq.len());
+        let mut res = vec![Mint::new(0);len];
+        for i in 0..len {
+            if i < self.seq.len() { res[i] += self.seq[i];}
+            if i < rhs.seq.len() { res[i] -= rhs.seq[i];}
+        }
+        Self{seq: res}
     }
 }
 
@@ -189,10 +177,7 @@ impl Sub for Poly{
 impl Mul for Poly{
     type Output = Self;
     fn mul(self, rhs:Self) -> Self {
-        NTTCNT.with(|v| {
-            v.borrow_mut().push(self.seq.len() + rhs.seq.len());
-        });
-        let res = ac_library::convolution(&self.seq,&rhs.seq);
+        let res = convolution(&self.seq,&rhs.seq);
         Self{seq: res}
     }
 }
