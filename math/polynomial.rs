@@ -93,12 +93,18 @@ impl Poly{
 
     //逆元の前N項 O(NlogN)
     fn inv(&self,N:usize) -> Self{
-        let mut res = Poly::new(vec![Mint::new(1)/self.seq[0]]);
+        let mut res = Poly::new(Vec::with_capacity(N));
+        res.seq.push(Mint::new(1)/self.seq[0]);
         while res.seq.len() < N{
-            let mut L = N.min(res.seq.len()*2);
-            let mut rhs = res.mul_const(Mint::new(-1)).mul(&self,L);
-            rhs.seq[0] += Mint::new(2);
-            res = res.mul(&rhs,L); // g = g(2-gf)
+            // g = g(2-gf)
+            let preL = res.seq.len();
+            let L = (preL*2).min(N);
+            let mut rhs = res.mul(&self,L);
+            rhs.seq = rhs.seq[preL..L].to_vec();
+            let mut new = res.mul(&rhs,L-preL);
+            for i in 0..L-preL {
+                res.seq.push(-new.seq[i]);
+            }
         }
         res
     }
