@@ -99,7 +99,7 @@ impl Poly{
     
     //微分 O(N)
     fn bibun(&self) -> Self{
-        let mut res = vec![];
+        let mut res = Vec::with_capacity(self.seq.len());
         for i in 1..self.seq.len(){
             res.push(self.seq[i]*Mint::new(i));
         }
@@ -108,7 +108,8 @@ impl Poly{
     
     //積分 O(N)
     fn sekibun(&self) -> Self{
-        let mut res = vec![Mint::new(0)];
+        let mut res = Vec::with_capacity(self.seq.len()+1);
+        res.push(Mint::new(0));
         let mut modinv = vec![Mint::new(1);self.seq.len() + 3]; //逆元の列挙
         for i in 2..modinv.len(){
             modinv[i] = -Mint::new(998244353/i) * modinv[998244353%i];
