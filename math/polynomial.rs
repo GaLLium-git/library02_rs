@@ -51,12 +51,34 @@ impl Poly{
     }
     
     //前N項を残す
-    fn truncate(&self,N:usize) -> Self {
+    fn truncate(&self,N:usize) -> Self{
         Self{seq: self.seq[..N.min(self.seq.len())].to_vec()}
     }
     
+    //加法 O(N)
+    fn add(&self, rhs:&Self, N:usize) -> Self{
+        let mut res = vec![Mint::new(0);N];
+        for i in 0..N {
+            if i < self.seq.len() { res[i] += self.seq[i];}
+            if i < rhs.seq.len() { res[i] += rhs.seq[i];}
+        }
+        Self{seq: res}
+    }
+    
+    //乗法 O(NlogN)
+    fn mul(&self, rhs: &Self, N: usize) -> Self {
+        let mut a = self.seq.clone();
+        let mut b = rhs.seq.clone();
+        a.resize(N, Mint::new(0));
+        b.resize(N, Mint::new(0));
+
+        let mut res = convolution(&a, &b);
+        res.truncate(N);
+        Self { seq: res }
+    }
+    
     //定数倍 O(N)
-    fn mul_const(&self, c:Mint) -> Self {
+    fn mul_const(&self, c:Mint) -> Self{
         let mut res = vec![Mint::new(0);self.seq.len()];
         for i in 0..self.seq.len(){
             res[i] = self.seq[i] * c;
@@ -67,17 +89,14 @@ impl Poly{
 
     //逆元の前N項 O(NlogN)
     fn inv(&self,N:usize) -> Self{
-        let mut res = Vec::with_capacity(N);
-        res.push(Mint::new(1)/self.seq[0]);
-        while res.len() < N{
-            let mut nex_len = N.min(res.len()*2);
-            let mut new = convolution(&convolution(&res,&res),&self.truncate(nex_len).seq);
-            new.resize(nex_len,Mint::new(0));
-            for i in res.len()..nex_len{
-                res.push(-new[i]);
-            }
+        let mut res = Poly::new(vec![Mint::new(1)/self.seq[0]]);
+        while res.seq.len() < N{
+            let mut L = N.min(res.seq.len()*2);
+            let mut rhs = res.mul_const(Mint::new(-1)).mul(&self,L);
+            rhs.seq[0] += Mint::new(2);
+            res = res.mul(&rhs,L);
         }
-        Self {seq: res}
+        res
     }
     
     //微分 O(N)
@@ -105,22 +124,19 @@ impl Poly{
     
     //logの前N項 O(NlogN) 定数項が1
     fn log(&self,N:usize) -> Self{
-        (self.truncate(N+1).bibun() * self.inv(N)).truncate(N-1).sekibun()
+        (self.truncate(N+1).bibun().mul(&self.inv(N),N-1)).sekibun()
     }
     
     //expの前N項 O(NlogN) 定数項が0
     fn exp(&self,N:usize) -> Self{
-        let mut res = Vec::with_capacity(N);
-        res.push(Mint::new(1));
-        while res.len() < N{
-            let mut nex_len = N.min(res.len()*2);
-            let mut new = convolution(&res,&(self.truncate(nex_len)-Poly::new(res.clone()).log(nex_len)).seq);
-            new.resize(nex_len,Mint::new(0));
-            for i in res.len()..nex_len{
-                res.push(new[i]);
-            }
+        let mut res = Poly::new(vec![Mint::new(1)]);
+        while res.seq.len() < N{
+            let mut L = N.min(res.seq.len()*2);
+            let mut rhs = res.log(L).mul_const(Mint::new(-1)).add(&self,L);
+            rhs.seq[0] += Mint::new(1);
+            res = res.mul(&rhs,L);
         }
-        Self {seq: res}
+        res
     }
     
     //累乗の前N項 O(NlogN) 定数項が1
@@ -140,44 +156,5 @@ impl Poly{
     
     fn taylor_shift(&self,c:Mint){
         
-    }
-}
-
-
-use std::ops::{Add,Sub,Mul,Div};
-//加法 O(N)
-impl Add for Poly{
-    type Output = Self;
-    fn add(self, rhs:Self) -> Self {
-        let len = self.seq.len().max(rhs.seq.len());
-        let mut res = vec![Mint::new(0);len];
-        for i in 0..len {
-            if i < self.seq.len() { res[i] += self.seq[i];}
-            if i < rhs.seq.len() { res[i] += rhs.seq[i];}
-        }
-        Self{seq: res}
-    }
-}
-
-//減法 O(N)
-impl Sub for Poly{
-    type Output = Self;
-    fn sub(self, rhs:Self) -> Self {
-        let len = self.seq.len().max(rhs.seq.len());
-        let mut res = vec![Mint::new(0);len];
-        for i in 0..len {
-            if i < self.seq.len() { res[i] += self.seq[i];}
-            if i < rhs.seq.len() { res[i] -= rhs.seq[i];}
-        }
-        Self{seq: res}
-    }
-}
-
-//乗法 O(NlogN)
-impl Mul for Poly{
-    type Output = Self;
-    fn mul(self, rhs:Self) -> Self {
-        let res = convolution(&self.seq,&rhs.seq);
-        Self{seq: res}
     }
 }
