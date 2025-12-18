@@ -100,31 +100,32 @@ impl Poly{
     }
     
     //微分 O(N)
-    fn bibun(&self) -> Self{
-        let mut res = Vec::with_capacity(self.seq.len());
-        for i in 1..self.seq.len(){
-            res.push(self.seq[i]*Mint::new(i));
+    fn bibun(&self,N:usize) -> Self{
+        let mut res = vec![Mint::new(0);N];
+        let lim = N.min(self.seq.len()-1);
+        for i in 0..lim{
+            res[i] = self.seq[i+1] * Mint::new(i+1);
         }
         Self{seq: res}
     }
     
     //積分 O(N)
-    fn sekibun(&self) -> Self{
-        let mut res = Vec::with_capacity(self.seq.len()+1);
-        res.push(Mint::new(0));
-        let mut modinv = vec![Mint::new(1);self.seq.len() + 3]; //逆元の列挙
+    fn sekibun(&self,N:usize) -> Self{
+        let mut res = vec![Mint::new(0);N];
+        let lim = N.min(self.seq.len()+1);
+        let mut modinv = vec![Mint::new(1);lim + 3]; //逆元の列挙
         for i in 2..modinv.len(){
             modinv[i] = -Mint::new(998244353/i) * modinv[998244353%i];
         }
-        for i in 0..self.seq.len(){
-            res.push(self.seq[i] * modinv[i+1]);
+        for i in 1..lim{
+            res[i] = self.seq[i-1] * modinv[i];
         }
         Self{seq: res}
     }
     
     //logの前N項 O(NlogN) 定数項が1
     fn log(&self,N:usize) -> Self{
-        (self.truncate(N+1).bibun().mul(&self.inv(N),N-1)).sekibun()
+        (self.bibun(N-1).mul(&self.inv(N-1),N-1)).sekibun(N)
     }
     
     //expの前N項 O(NlogN) 定数項が0
