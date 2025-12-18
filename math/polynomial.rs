@@ -50,31 +50,23 @@ impl Poly{
         Self{seq}
     }
     
-    //前N項を残す
-    fn truncate(&self,N:usize) -> Self{
-        Self{seq: self.seq[..N.min(self.seq.len())].to_vec()}
-    }
-    
     //加法 O(N)
     fn add(&self, rhs:&Self, N:usize) -> Self{
         let mut res = vec![Mint::new(0);N];
-        for i in 0..N {
-            if i < self.seq.len() { res[i] += self.seq[i];}
-            if i < rhs.seq.len() { res[i] += rhs.seq[i];}
+        for i in 0..N.min(self.seq.len()) {
+            res[i] += self.seq[i];
+        }
+        for i in 0..N.min(rhs.seq.len()) {
+            res[i] += rhs.seq[i];
         }
         Self{seq: res}
     }
     
     //乗法 O(NlogN)
     fn mul(&self, rhs: &Self, N: usize) -> Self {
-        let mut a = self.seq.clone();
-        let mut b = rhs.seq.clone();
-        a.resize(N, Mint::new(0));
-        b.resize(N, Mint::new(0));
-
-        let mut res = convolution(&a, &b);
-        res.truncate(N);
-        Self { seq: res }
+        let mut res = convolution(&self.seq[..self.seq.len().min(N)], &rhs.seq[..rhs.seq.len().min(N)]);
+        res.resize(N,Mint::new(0));
+        Self {seq: res }
     }
     
     //定数倍 O(N)
