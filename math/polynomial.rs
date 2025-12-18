@@ -123,17 +123,22 @@ impl Poly{
     
     //logの前N項 O(NlogN) 定数項が1
     fn log(&self,N:usize) -> Self{
-        let mut res = (self.truncate(N+1).bibun() * self.inv(N)).sekibun();
-        res.truncate(N)
+        (self.truncate(N+1).bibun() * self.inv(N)).truncate(N-1).sekibun()
     }
     
     //expの前N項 O(NlogN) 定数項が0
     fn exp(&self,N:usize) -> Self{
-        let mut res = Poly::new(vec![Mint::new(1)]);
-        for i in 1..=N.ilog2()+1{
-            res = res.clone()*(Poly::new(vec![Mint::new(1)]) - res.clone().log(1<<i) + self.truncate(1<<i)).truncate(1<<i);
+        let mut res = Vec::with_capacity(N);
+        res.push(Mint::new(1));
+        while res.len() < N{
+            let mut nex_len = N.min(res.len()*2);
+            let mut new = convolution(&res,&(Poly::new(res.clone()).log(nex_len)-self.truncate(nex_len)).seq);
+            new.resize(nex_len,Mint::new(0));
+            for i in res.len()..nex_len{
+                res.push(-new[i]);
+            }
         }
-        res.truncate(N)
+        Self {seq: res}
     }
     
     //累乗の前N項 O(NlogN) 定数項が1
