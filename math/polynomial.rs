@@ -101,7 +101,7 @@ impl Poly{
             let preL = res.seq.len();
             let L = (preL*2).min(N);
             let mut rhs = res.mul(&self,L);
-            rhs.seq = rhs.seq[preL..L].to_vec();
+            rhs.seq.drain(..preL);
             let mut new = res.mul(&rhs,L-preL);
             for i in 0..L-preL {
                 res.seq.push(-new.seq[i]);
@@ -148,11 +148,11 @@ impl Poly{
             //g(-log(g)+f)[preL..L] = (g * (-log(g)+f)[preL..L])[0..L-preL]をgに連結する
             let preL = res.seq.len();
             let L = (preL*2).min(N);
-            let mut rhs = res.log(L).mul_const(Mint::new(-1)).add(&self,L);
-            rhs.seq = rhs.seq[preL..L].to_vec();
+            let mut rhs = res.log(L).sub(&self,L);
+            rhs.seq.drain(..preL);
             let mut new = res.mul(&rhs,L-preL);
             for i in 0..L-preL {
-                res.seq.push(new.seq[i]);
+                res.seq.push(-new.seq[i]);
             }
         }
         res
