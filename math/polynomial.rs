@@ -1,41 +1,3 @@
-#![allow(unused)]
-#![allow(non_snake_case)]
-#![allow(dead_code)]
-
-
-fn main() {
-    let mut sc=Scanner::new();
-    let (D,N):(usize,usize) = (sc.next(),sc.next());
-    if D > N {
-        println!("{}",0);
-        return;
-    }
-    let mut poly = Poly::new(vec![
-        Mint::new(1),Mint::new(0),Mint::new(1),
-        Mint::new(1),Mint::new(0),Mint::new(1)
-    ]);
-    let mut ans = poly.pow(D,N);
-    println!("{}",ans.seq[N-D]);
-}
-
-// Scanner
-pub struct Scanner {
-    buffer: std::collections::VecDeque<String>,
-}
-impl Scanner {
-    pub fn new() -> Self {
-        Scanner {buffer: std::collections::VecDeque::new()}
-    }
-    pub fn next<T: std::str::FromStr>(&mut self) -> T {
-        if self.buffer.len() == 0 {
-            let mut input = String::new();
-            std::io::stdin().read_line(&mut input).unwrap();
-            self.buffer = input.split_whitespace().map(|s| s.to_string()).collect();
-        }
-        self.buffer.pop_front().unwrap().parse::<T>().ok().unwrap()
-    }
-}
-
 //多項式ライブラリ
 type Mint = ac_library::ModInt998244353;
 use ac_library::convolution;
@@ -159,7 +121,7 @@ impl Poly{
     }
     
     //累乗の前N項 O(NlogN) 定数項が1
-    fn pow(&self, k:usize,N:usize) -> Self{
+    fn pow(&self,k:usize,N:usize) -> Self{
         (self.log(N).mul_const(Mint::new(k))).exp(N) 
     }
     
@@ -173,7 +135,26 @@ impl Poly{
         res
     }
     
+    //Bostan-Mori法 O(dlogdlogN)
+    fn bostan_mori(&self,Q:&Self,N:usize) -> Mint{
+        if N == 0 { return self.seq[0]/Q.seq[0]; }
+        let d = Q.seq.len();
+        let mut Q_neg = Q.clone();
+        for i in (1..d).step_by(2) {
+            Q_neg.seq[i] *= Mint::new(-1);
+        }
+        let mut V = Q.mul(&Q_neg,2*d);
+        V.seq = V.seq.into_iter().step_by(2).collect();
+        let mut U = self.mul(&Q_neg,2*d);
+        if N % 2 == 0 { 
+            U.seq = U.seq.into_iter().step_by(2).collect();
+        } else {
+            U.seq = U.seq.into_iter().skip(1).step_by(2).collect();
+        }
+        U.bostan_mori(&V,N/2)
+    }
+    
     fn taylor_shift(&self,c:Mint){
         
-    }
+    } 
 }
