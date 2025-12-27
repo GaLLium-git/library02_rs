@@ -1,11 +1,11 @@
 //HLぶんかい
 pub struct HLD{
     graph: Vec<Vec<usize>>,
-    top: Vec<usize>,
     depth: Vec<usize>,
     parent: Vec<usize>,
-    index: Vec<usize>,
     heavy: Vec<usize>,
+    top: Vec<usize>,
+    index: Vec<usize>,
 }
 
 impl HLD{
