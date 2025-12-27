@@ -9,6 +9,7 @@ pub struct HLD{
 }
 
 impl HLD{
+    //構築 O(V)
     pub fn new(graph:&Vec<Vec<usize>>, root:usize) -> Self{
         let len = graph.len();
         let mut hld = Self{
@@ -55,7 +56,7 @@ impl HLD{
             self.dfs2(nv,nv);
         }
     }
-
+    //LCA O(VlogV)
     pub fn lca(&self, mut u:usize, mut v:usize) -> usize{
         loop{
             if self.top[u] == self.top[v]{
