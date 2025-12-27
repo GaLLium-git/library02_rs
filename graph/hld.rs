@@ -12,12 +12,12 @@ impl HLD{
     pub fn new(graph:&Vec<Vec<usize>>, root:usize) -> Self{
         let len = graph.len();
         let mut hld = Self{
-           graph:graph.clone(),
-           top:vec![0;len],
-           depth:vec![0;len],
-           parent:vec![0;len],
-           index:vec![0;len],
-           heavy:vec![usize::MAX;len],
+            graph:graph.clone(),
+            depth:vec![0;len],
+            parent:vec![0;len],
+            heavy:vec![usize::MAX;len],
+            top:vec![0;len],
+            index:vec![0;len],
         };
         hld.dfs1(root,root);
         hld.dfs2(root,root);
