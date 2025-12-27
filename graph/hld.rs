@@ -1,5 +1,3 @@
-
-
 //HLぶんかい
 pub struct HLD{
     graph: Vec<Vec<usize>>,
@@ -11,10 +9,10 @@ pub struct HLD{
 }
 
 impl HLD{
-    pub fn new(graph:Vec<Vec<usize>>, root:usize) -> Self{
+    pub fn new(graph:&Vec<Vec<usize>>, root:usize) -> Self{
         let len = graph.len();
         let mut hld = Self{
-           graph,
+           graph:graph.clone(),
            top:vec![0;len],
            depth:vec![0;len],
            parent:vec![0;len],
@@ -29,9 +27,9 @@ impl HLD{
     //depth,parent,heavyを作る
     fn dfs1(&mut self, v:usize, p:usize) -> usize{
         self.parent[v] = p;
-        self.depth[v] = self.depth[p]+1;
+        if v!=p {self.depth[v] = self.depth[p]+1;}
         let mut maxsize = 0;
-        let mut size = 0;
+        let mut size = 1;
         let children = self.graph[v].clone();
         for &nv in children.iter(){
             if nv == self.parent[v] {continue;}
@@ -53,7 +51,7 @@ impl HLD{
         }
         let children = self.graph[v].clone();
         for &nv in children.iter(){
-            if nv == self.parent[v] {continue;}
+            if nv == self.parent[v] || nv == self.heavy[v] {continue;}
             self.dfs2(nv,nv);
         }
     }
@@ -61,12 +59,12 @@ impl HLD{
     pub fn lca(&self, mut u:usize, mut v:usize) -> usize{
         loop{
             if self.top[u] == self.top[v]{
-                return if self.depth[u] > self.depth[v]{u} else {v};
+                return if self.depth[u] < self.depth[v] {u} else {v};
             }
-            if self.depth[u] > self.depth[v] {
+            if self.depth[self.top[u]] < self.depth[self.top[v]] {
                 v = self.parent[self.top[v]];
             } else{
-                u = self.parent[self.top[v]];
+                u = self.parent[self.top[u]];
             }
         }
     }
