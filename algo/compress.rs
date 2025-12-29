@@ -13,7 +13,7 @@ pub fn compress<T:Ord + Copy> (a:&Vec<T>)->Vec<usize>{
     t.dedup();
     let mut b=Vec::new();
     for i in 0..a.len(){
-        b.push(bsearch_irange(0,t.len(),|x| t[x]>=a[i]))
+        b.push(bsearch_usize(0,t.len(),|x| t[x]>=a[i]))
     }
     b
 }
