@@ -16,8 +16,8 @@ pub struct SparseTable<M:Monoid>{
 impl<M:Monoid> SparseTable<M>{
     fn new(val:&Vec<M::S>)->Self{
         let log=(val.len().ilog2() +1) as usize;
-        let size=(1<<log);
-        let mut data=vec![vec![M::identity();size];log+1]; //i段目は分割幅2^i
+        let len=(1<<log);
+        let mut data=vec![vec![M::identity();len];log+1]; //i段目は分割幅2^i
         for i in 0..val.len(){
             data[0][i]=val[i].clone();
         }
