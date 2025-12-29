@@ -1,4 +1,5 @@
 //Li Chao Tree
+//追加，取得ともにO(logN)
 pub struct LiChaotree<F,T,Eval>
 where
     F: Copy,
@@ -26,8 +27,14 @@ where
         }
     }
     
-    pub fn add(&mut self, f:F){
+    //tree[k]への追加
+    fn _add(&mut self, f:F, k:usize){
+        //覆っている区間[l,r)
         
+    }
+
+    pub fn add(&mut self, f:F){
+        self._add(f,0,1);
     }
     
     pub fn get_min(&self, x:T) -> T{
@@ -39,4 +46,31 @@ where
         }
         res
     }
+}
+
+
+//range で fがtrueとなる最小を返す
+pub fn bsearch_usize<F>(range: impl std::ops::RangeBounds<usize>, f: F) -> usize
+where
+    F: Fn(usize) -> bool,
+{
+    let mut l = match range.start_bound() {
+        std::ops::Bound::Included(l) => *l,
+        std::ops::Bound::Excluded(l) => l+1,
+        std::ops::Bound::Unbounded => 0,
+    };
+    let mut r = match range.end_bound() {
+        std::ops::Bound::Included(r) => r+1,
+        std::ops::Bound::Excluded(r) => *r,
+        std::ops::Bound::Unbounded => usize::MAX,
+    };
+    while l < r {
+        let m = l + (r - l) / 2;
+        if f(m) {
+            r = m;
+        } else {
+            l = m + 1;
+        }
+    }
+    l
 }
