@@ -1,11 +1,12 @@
 //HLぶんかい
 pub struct HLD{
     graph: Vec<Vec<usize>>,
-    depth: Vec<usize>,
-    parent: Vec<usize>,
-    heavy: Vec<usize>,
-    top: Vec<usize>,
-    index: Vec<usize>,
+    depth: Vec<usize>, //深さ
+    parent: Vec<usize>, //親
+    size: Vec<usize>,  //部分木のサイズ
+    heavy: Vec<usize>, //heavyな子
+    top: Vec<usize>,  //属するheavyパスの根
+    index: Vec<usize>, //列に直したときのインデックス
 }
 
 impl HLD{
@@ -16,6 +17,7 @@ impl HLD{
             graph:graph.clone(),
             depth:vec![0;len],
             parent:vec![0;len],
+            size:vec![0;len],
             heavy:vec![usize::MAX;len],
             top:vec![0;len],
             index:vec![0;len],
@@ -25,8 +27,8 @@ impl HLD{
         hld
     }
     
-    //depth,parent,heavyを作る
-    fn dfs1(&mut self, v:usize, p:usize) -> usize{
+    //depth,parent,size,heavyを作る
+    fn dfs1(&mut self, v:usize, p:usize){
         self.parent[v] = p;
         if v!=p {self.depth[v] = self.depth[p]+1;}
         let mut maxsize = 0;
@@ -34,17 +36,17 @@ impl HLD{
         let children = self.graph[v].clone();
         for &nv in children.iter(){
             if nv == self.parent[v] {continue;}
-            let subsize = self.dfs1(nv,v);
-            size += subsize;
-            if subsize > maxsize{
+            self.dfs1(nv,v);
+            size += self.size[nv];
+            if self.size[nv] > maxsize{
                 self.heavy[v] = nv;
-                maxsize = subsize;
+                maxsize = self.size[nv];
             }
         }
-        size
+        self.size[v] = size
     }
     
-    //topを作る(heavy辺を優先するDFS)
+    //top,indexを作る(heavy辺を優先するDFS)
     fn dfs2(&mut self, v:usize, t:usize){
         self.top[v] = t;
         if self.heavy[v] != usize::MAX{
@@ -56,6 +58,7 @@ impl HLD{
             self.dfs2(nv,nv);
         }
     }
+    
     //LCA O(VlogV)
     pub fn lca(&self, mut u:usize, mut v:usize) -> usize{
         loop{
