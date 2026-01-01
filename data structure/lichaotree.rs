@@ -27,14 +27,16 @@ where
         }
     }
     
-    //tree[k]への追加
-    fn _add(&mut self, f:F, k:usize){
-        //覆っている区間[l,r)
+    //tree[k],範囲[l,r)への追加
+    fn _add(&mut self, f:F, k:usize, l:usize, r:usize){
+        
+        
+        
         
     }
 
     pub fn add(&mut self, f:F){
-        self._add(f,0,1);
+        self._add(f,1,0,self.tree.len()/2);
     }
     
     pub fn get_min(&self, x:T) -> T{
