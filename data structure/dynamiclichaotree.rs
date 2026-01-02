@@ -2,8 +2,8 @@
 //追加，取得ともにO(logN)
 struct Node<F>{
     f: F,
-    left: Option<usize>,
-    right: Option<usize>,
+    lc: Option<usize>,
+    rc: Option<usize>,
 }
 
 pub struct LiChaoTree<F,T,Eval>
@@ -35,15 +35,18 @@ where
         }
     }
     
+    
     fn _add()
     pub fn add(&mut self, f:F){
-        self._add(f,self.x_min,self.x_max);
+        self._add(f,self.tree[0],self.x_min,self.x_max);
     }
     
-    
-    fn _get()
+    //[l,r)を覆うノードでのｘの代入
+    fn _get(&self, x:T, node:Node, l:T, r:T){
+        
+    }
     pub fn get(&self, x:T) -> T{
-       self._get(x,self.x_min,self.x_max);
+       self._get(x,self.tree[0],self.x_min,self.x_max);
     }
 }
 
