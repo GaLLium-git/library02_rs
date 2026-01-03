@@ -46,6 +46,8 @@ where
             (self.tree[v].f,f) = (f,self.tree[v].f);
         }
         
+        if r - l == 1{return;}
+        
         let new_l = (self.eval)(f,l);
         let new_r = (self.eval)(f,r);
         let pre_l = (self.eval)(self.tree[v].f,l);
