@@ -1,33 +1,34 @@
 //Dynamic Li Chao Tree
 //追加，取得ともにO(logN)
+
+type T = usize; //xの型 
+#[derive(Copy, Clone)]
 struct Node<F>{
     f: F,
     lc: Option<usize>,
     rc: Option<usize>,
 }
 
-pub struct LiChaoTree<F,T,Eval>
+pub struct LiChaoTree<F,Eval>
 where
     F: Copy,
-    T: Copy + Ord,
     Eval: Fn(F, T) -> T,
 {
-    tree: Vec<LiChaoNode>,    
+    tree: Vec<Node<F>>,    
     eval: Eval,
     id: F,
     x_min: T,
     x_max: T,
 }
 
-impl<F,T,Eval> LiChaoTree<F,T,Eval>
+impl<F,Eval> LiChaoTree<F,Eval>
 where
     F: Copy,
-    T: Copy + Ord,
     Eval: Fn(F, T) -> T,
 {
     pub fn new(eval:Eval, id:F, x_min:T, x_max:T) -> Self{
         Self {
-            tree: vec![Node{f:id,left:None,right:None}],
+            tree: vec![Node{f:id,lc:None,rc:None}],
             eval,
             id,
             x_min,
@@ -36,43 +37,59 @@ where
     }
     
     
-    fn _add()
+    fn _add(&mut self, mut f:F, mut node:Node<F>, l:T, r:T){
+        let m = l+(r-l)/2;
+        let new_m = (self.eval)(f,m);
+        let pre_m = (self.eval)(node.f,m);
+        
+        if new_m <= pre_m{
+            (node.f,f) = (f,node.f);
+        }
+        
+        let new_l = (self.eval)(f,l);
+        let new_r = (self.eval)(f,r);
+        let pre_l = (self.eval)(node.f,l);
+        let pre_r = (self.eval)(node.f,r);
+        
+        if new_l >= pre_l && new_r >= pre_r{return;}
+        
+        else if new_l < pre_l{
+            if node.lc.is_none(){
+                node.lc = Some(self.tree.len());
+                self.tree.push(Node{f:self.id,lc:None,rc:None});
+            }
+            self._add(f, self.tree[node.lc.unwrap()], l, m);
+        }
+        
+        else if new_r < pre_r{
+            if node.rc.is_none(){
+                node.rc = Some(self.tree.len());
+                self.tree.push(Node{f:self.id,lc:None,rc:None});
+            }
+            self._add(f, self.tree[node.rc.unwrap()], l, m);
+        }
+        
+    }
     pub fn add(&mut self, f:F){
         self._add(f,self.tree[0],self.x_min,self.x_max);
     }
     
     //[l,r)を覆うノードでのｘの代入
-    fn _get(&self, x:T, node:Node, l:T, r:T){
-        
-    }
-    pub fn get(&self, x:T) -> T{
-       self._get(x,self.tree[0],self.x_min,self.x_max);
-    }
-}
-
-
-//range で fがtrueとなる最小を返す
-pub fn bsearch_usize<F>(range: impl std::ops::RangeBounds<usize>, f: F) -> usize
-where
-    F: Fn(usize) -> bool,
-{
-    let mut l = match range.start_bound() {
-        std::ops::Bound::Included(l) => *l,
-        std::ops::Bound::Excluded(l) => l+1,
-        std::ops::Bound::Unbounded => 0,
-    };
-    let mut r = match range.end_bound() {
-        std::ops::Bound::Included(r) => r+1,
-        std::ops::Bound::Excluded(r) => *r,
-        std::ops::Bound::Unbounded => usize::MAX,
-    };
-    while l < r {
-        let m = l + (r - l) / 2;
-        if f(m) {
-            r = m;
-        } else {
-            l = m + 1;
+    fn _get(&self, x:T, node:Node<F>, l:T, r:T) -> T{
+        let m = l+(r-l)/2;
+        let mut res = (self.eval)(node.f, x);
+        //左側
+        if l <= x && x < m && node.lc.is_some(){
+            res = res.min(self._get(x, self.tree[node.lc.unwrap()], l, m));
         }
+        //右側
+        if m <= x && x < r && node.rc.is_some(){
+            res = res.min(self._get(x, self.tree[node.rc.unwrap()], m, r));
+        }
+        res
     }
-    l
+    
+    pub fn get(&self, x:T) -> T{
+       self._get(x,self.tree[0],self.x_min,self.x_max)
+    }
 }
