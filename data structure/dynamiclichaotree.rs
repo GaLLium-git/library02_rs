@@ -1,7 +1,54 @@
+fn main(){
+    let mut sc = Scanner::new();
+    let (N,Q):(usize,usize) = (sc.next(),sc.next());
+    type F = (i64,i64);
+    let eval = |f:F,x:T| -> T{
+        f.0 * x + f.1
+    };
+    let id = (0,i64::MAX);
+    let x_min = -1_000_000_005;
+    let x_max = 1_000_000_005;
+    let mut Li = LiChaoTree::new(eval,id,x_min,x_max);
+    
+    for _ in 0..N{
+        let (a,b):(i64,i64) = (sc.next(),sc.next());
+        Li.add((a,b));
+    }
+    
+    for _ in 0..Q{
+        let qu:usize = sc.next();
+        if qu==0{
+            let (a,b):(i64,i64) = (sc.next(),sc.next());
+            Li.add((a,b));
+        } else{
+            let x:i64 = sc.next();
+            println!("{}",Li.get(x));
+        }
+    }
+}
+
+//Scanner
+pub struct Scanner {
+    buffer: std::collections::VecDeque<String>,
+}
+impl Scanner {
+    pub fn new() -> Self {
+        Scanner {buffer: std::collections::VecDeque::new()}
+    }
+    pub fn next<T: std::str::FromStr>(&mut self) -> T {
+        if self.buffer.len() == 0 {
+            let mut input = String::new();
+            std::io::stdin().read_line(&mut input).unwrap();
+            self.buffer = input.split_whitespace().map(|s| s.to_string()).collect();
+        }
+        self.buffer.pop_front().unwrap().parse::<T>().ok().unwrap()
+    }
+}
+
 //Dynamic Li Chao Tree
 //追加，取得ともにO(logN)
 
-type T = usize; //xの型 
+type T = i64; //xの型 
 #[derive(Copy, Clone)]
 struct Node<F>{
     f: F,
@@ -42,7 +89,7 @@ where
         let new_m = (self.eval)(f,m);
         let pre_m = (self.eval)(self.tree[v].f,m);
         
-        if new_m <= pre_m{
+        if new_m < pre_m{
             (self.tree[v].f,f) = (f,self.tree[v].f);
         }
         
