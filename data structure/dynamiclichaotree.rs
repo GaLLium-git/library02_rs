@@ -36,60 +36,60 @@ where
         }
     }
     
-    
-    fn _add(&mut self, mut f:F, mut node:Node<F>, l:T, r:T){
+    //[l,r)を覆うノードvでの更新
+    fn _add(&mut self, mut f:F, v:usize, l:T, r:T){
         let m = l+(r-l)/2;
         let new_m = (self.eval)(f,m);
-        let pre_m = (self.eval)(node.f,m);
+        let pre_m = (self.eval)(self.tree[v].f,m);
         
         if new_m <= pre_m{
-            (node.f,f) = (f,node.f);
+            (self.tree[v].f,f) = (f,self.tree[v].f);
         }
         
         let new_l = (self.eval)(f,l);
         let new_r = (self.eval)(f,r);
-        let pre_l = (self.eval)(node.f,l);
-        let pre_r = (self.eval)(node.f,r);
+        let pre_l = (self.eval)(self.tree[v].f,l);
+        let pre_r = (self.eval)(self.tree[v].f,r);
         
         if new_l >= pre_l && new_r >= pre_r{return;}
         
         else if new_l < pre_l{
-            if node.lc.is_none(){
-                node.lc = Some(self.tree.len());
+            if self.tree[v].lc.is_none(){
+                self.tree[v].lc = Some(self.tree.len());
                 self.tree.push(Node{f:self.id,lc:None,rc:None});
             }
-            self._add(f, self.tree[node.lc.unwrap()], l, m);
+            self._add(f, self.tree[v].lc.unwrap(), l, m);
         }
         
         else if new_r < pre_r{
-            if node.rc.is_none(){
-                node.rc = Some(self.tree.len());
+            if self.tree[v].rc.is_none(){
+                self.tree[v].rc = Some(self.tree.len());
                 self.tree.push(Node{f:self.id,lc:None,rc:None});
             }
-            self._add(f, self.tree[node.rc.unwrap()], l, m);
+            self._add(f, self.tree[v].rc.unwrap(), m, r);
         }
         
     }
     pub fn add(&mut self, f:F){
-        self._add(f,self.tree[0],self.x_min,self.x_max);
+        self._add(f,0,self.x_min,self.x_max);
     }
     
     //[l,r)を覆うノードでのｘの代入
-    fn _get(&self, x:T, node:Node<F>, l:T, r:T) -> T{
+    fn _get(&self, x:T, v:usize, l:T, r:T) -> T{
         let m = l+(r-l)/2;
-        let mut res = (self.eval)(node.f, x);
+        let mut res = (self.eval)(self.tree[v].f, x);
         //左側
-        if l <= x && x < m && node.lc.is_some(){
-            res = res.min(self._get(x, self.tree[node.lc.unwrap()], l, m));
+        if l <= x && x < m && self.tree[v].lc.is_some(){
+            res = res.min(self._get(x,self.tree[v].lc.unwrap(),l,m));
         }
         //右側
-        if m <= x && x < r && node.rc.is_some(){
-            res = res.min(self._get(x, self.tree[node.rc.unwrap()], m, r));
+        if m <= x && x < r && self.tree[v].rc.is_some(){
+            res = res.min(self._get(x,self.tree[v].rc.unwrap(),m,r));
         }
         res
     }
     
     pub fn get(&self, x:T) -> T{
-       self._get(x,self.tree[0],self.x_min,self.x_max)
+       self._get(x,0,self.x_min,self.x_max)
     }
 }
