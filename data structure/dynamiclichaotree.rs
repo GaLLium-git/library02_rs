@@ -27,24 +27,6 @@ fn main(){
     }
 }
 
-//Scanner
-pub struct Scanner {
-    buffer: std::collections::VecDeque<String>,
-}
-impl Scanner {
-    pub fn new() -> Self {
-        Scanner {buffer: std::collections::VecDeque::new()}
-    }
-    pub fn next<T: std::str::FromStr>(&mut self) -> T {
-        if self.buffer.len() == 0 {
-            let mut input = String::new();
-            std::io::stdin().read_line(&mut input).unwrap();
-            self.buffer = input.split_whitespace().map(|s| s.to_string()).collect();
-        }
-        self.buffer.pop_front().unwrap().parse::<T>().ok().unwrap()
-    }
-}
-
 //Dynamic Li Chao Tree
 //追加，取得ともにO(logN)
 
@@ -96,9 +78,9 @@ where
         if r - l == 1{return;}
         
         let new_l = (self.eval)(f,l);
-        let new_r = (self.eval)(f,r);
+        let new_r = (self.eval)(f,r-1);
         let pre_l = (self.eval)(self.tree[v].f,l);
-        let pre_r = (self.eval)(self.tree[v].f,r);
+        let pre_r = (self.eval)(self.tree[v].f,r-1);
         
         if new_l >= pre_l && new_r >= pre_r{return;}
         
