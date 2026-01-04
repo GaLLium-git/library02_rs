@@ -77,11 +77,22 @@ impl<T> Shift2D<T> for Vec<Vec<T>>
         }
     }
 
- //bsearch
-pub fn bsearch_irange<F>(mut l: usize, mut r: usize, f: F) -> usize
+//二分探索
+//range で fがtrueとなる最小を返す
+pub fn bsearch_usize<F>(range: impl std::ops::RangeBounds<usize>, f: F) -> usize
 where
     F: Fn(usize) -> bool,
 {
+    let mut l = match range.start_bound() {
+        std::ops::Bound::Included(l) => *l,
+        std::ops::Bound::Excluded(l) => l+1,
+        std::ops::Bound::Unbounded => 0,
+    };
+    let mut r = match range.end_bound() {
+        std::ops::Bound::Included(r) => r+1,
+        std::ops::Bound::Excluded(r) => *r,
+        std::ops::Bound::Unbounded => usize::MAX,
+    };
     while l < r {
         let m = l + (r - l) / 2;
         if f(m) {
@@ -93,10 +104,21 @@ where
     l
 }
 
-pub fn bsearch_frange<F>(mut l: f64, mut r: f64, f: F, eps: f64) -> f64
+//浮動小数点バージョン
+pub fn bsearch_f64<F>(range: impl std::ops::RangeBounds<f64>, f: F, eps: f64) -> f64
 where
     F: Fn(f64) -> bool,
 {
+    let mut l = match range.start_bound() {
+        std::ops::Bound::Included(l) => *l,
+        std::ops::Bound::Excluded(l) => l+eps,
+        std::ops::Bound::Unbounded => f64::MIN,
+    };
+    let mut r = match range.end_bound() {
+        std::ops::Bound::Included(r) => r+eps,
+        std::ops::Bound::Excluded(r) => *r,
+        std::ops::Bound::Unbounded => f64::MAX,
+    };
     while r - l > eps {
         let m = (l + r) / 2.0;
         if f(m) {
@@ -107,7 +129,7 @@ where
     }
     l
 }
-
+    
  //cumulate,cumlate_rev
 pub trait Cumulate<T> 
     where
