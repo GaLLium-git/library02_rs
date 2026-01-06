@@ -1,4 +1,4 @@
-fn dfs(v:usize,graph:&Vec<Vec<usize>>,seen:&mut Vec<bool>){
+pub fn dfs(v:usize,graph:&Vec<Vec<usize>>,seen:&mut Vec<bool>){
    seen[v]=true;
    for &nv in graph[v].iter(){
      if !(seen[nv]) {
