@@ -38,6 +38,7 @@ struct Node<F>{
     rc: Option<usize>,
 }
 
+#[derive(Clone)]
 pub struct LiChaoTree<F,Eval>
 where
     F: Copy,
