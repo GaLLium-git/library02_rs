@@ -5,16 +5,7 @@ pub fn bsearch_usize<F>(range: impl std::ops::RangeBounds<usize>, f: F) -> usize
 where
     F: Fn(usize) -> bool,
 {
-    let mut l = match range.start_bound() {
-        std::ops::Bound::Included(l) => *l,
-        std::ops::Bound::Excluded(l) => l+1,
-        std::ops::Bound::Unbounded => 0,
-    };
-    let mut r = match range.end_bound() {
-        std::ops::Bound::Included(r) => r+1,
-        std::ops::Bound::Excluded(r) => *r,
-        std::ops::Bound::Unbounded => usize::MAX,
-    };
+    let mut (l,r) = range_to_pair(range);
     while l < r {
         let m = l + (r - l) / 2;
         if f(m) {
