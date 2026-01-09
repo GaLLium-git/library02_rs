@@ -5,7 +5,7 @@ pub fn bsearch_usize<F>(range: impl std::ops::RangeBounds<usize>, f: F) -> usize
 where
     F: Fn(usize) -> bool,
 {
-    let (mut l, mut r) = range_to_pair(range);
+    let (mut l, mut r) = get_bounds_usize(range);
     while l < r {
         let m = l + (r - l) / 2;
         if f(m) {
