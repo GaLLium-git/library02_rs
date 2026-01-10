@@ -25,23 +25,23 @@ impl WaveletMatrix{
     }
     
     
-    pub fn access(i:usize) -> usize{
+    pub fn access(&self, i:usize) -> usize{
         let mut res = 0;
         let mut idx = i;
         for b in 0..data.len(){
-            res = res*2 + data[b].access(idx);
-            if data[b].access(idx) == 0{
-                idx = data[b].rank0(idx)
+            res = res*2 + self.data[b].access(idx);
+            if self.data[b].access(idx) == 0{
+                idx = self.data[b].rank0(idx)
             } else {
-                idx = data[b].rank1(idx) + count0[b];
+                idx = self.data[b].rank1(idx) + self.count0[b];
             }
         }
         res
     }
     
-    //rangeでのx以下の値の出現回数
-    pub fn rangefreq(x:usize,Ri:) -> usize{
-        
+    //rangeでのx未満の値の出現回数
+    pub fn rangefreq(range: impl std::ops::RangeBounds<usize>, x:usize) -> usize{
+        let (mut l, mut r) = get_bounds_usize(range);
     }
 }
 
