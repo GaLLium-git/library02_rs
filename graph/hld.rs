@@ -7,6 +7,7 @@ pub struct HLD{
     heavy: Vec<usize>, //heavyな子
     top: Vec<usize>,  //属するheavyパスの根
     index: Vec<usize>, //列に直したときのインデックス
+    cur: usize, //オイラーツアー用
 }
 
 impl HLD{
@@ -48,6 +49,8 @@ impl HLD{
     
     //top,indexを作る(heavy辺を優先するDFS)
     fn dfs2(&mut self, v:usize, t:usize){
+        self.index[v] = self.cur;
+        self.cur += 1;
         self.top[v] = t;
         if self.heavy[v] != usize::MAX{
             self.dfs2(self.heavy[v],self.top[v]);
