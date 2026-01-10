@@ -8,20 +8,22 @@ pub struct WaveletMatrix{
 impl WaveletMatrix{
     pub fn new(val:&Vec<usize>) -> Self{
         let log = val.iter().max().unwrap().ilog2();
-        let mut data = vec![];
+        let mut data = vec![bitvec::new(val.len());log+1];
         let mut count0 = vec![];
         for i in (0..=log).rev(){
-            let bits_i = vec![];
-            for &value in val.iter(){
-                bits_i.push(value>>i);
+            for j in 0..val.len(){
+                if val[j] >> i == 1{
+                    data[i].set(j);
+                }
             }
-            data.push(bitvec::new(&bits_i));
+            data[i].build();
         }
         Self{
             data,
             count0,
         }
     }
+    
     
     pub fn access(i:usize) -> usize{
         let mut res = 0;
@@ -36,12 +38,48 @@ impl WaveletMatrix{
         }
         res
     }
+    
+    //rangeでのx以下の値の出現回数
+    pub fn rangefreq(x:usize,Ri:) -> usize{
+        
+    }
 }
 
+//ビット列に対する操作
 struct bitvec{
-    
+    bits: Vec<usize>,
+    cumsum: Vec<usize>,
 }
 
 impl bitvec{
+    pub fn new(n:usize) -> Self{
+        Self{
+            bits: vec![0;n/64+1],
+            sum: vec![0;n/64+1],
+        }
+    }
     
+    pub fn set(&mut self, i:usize){
+        self.bits[i/64] |= 1<<(i%64);
+    }
+    
+    pub fn build(&mut self){
+        self.sum[0] = self.bits[0].counts_ones();
+        for i in 1..=n/64{
+            self.sum[i] = self.sum[i-1] + self.bits[i].counts_ones(); 
+        }
+    }
+    
+    pub fn access(&self, i:usize) -> usize{
+        (self.bits[i/64] >> (i%64)) & 1
+    }
+    
+    //[0,i) での 1の個数
+    pub fn rank1(&self, i:usize) -> usize{
+        self.sum[i/64] + (self.bits[i/64] & (1<<(i%64)-1)).count_ones()
+    }
+    
+    pub fn rank0(&self, i:usize) -> usize{
+        i - self.rank1(i)
+    }
 }
