@@ -47,17 +47,7 @@ impl<M:Monoid> SparseTable<M>{
     }
     
     fn prod(&self,range: impl std::ops::RangeBounds<usize>)->M::S{
-        let mut r = match range.end_bound() {
-            std::ops::Bound::Included(r) => *r,
-            std::ops::Bound::Excluded(r) => r - 1,
-            std::ops::Bound::Unbounded => self.data[0].len() - 1,
-        };
-        let mut l = match range.start_bound() {
-            std::ops::Bound::Included(l) => *l,
-            std::ops::Bound::Excluded(l) => l + 1,
-            std::ops::Bound::Unbounded => 0,
-        };
-        
+        let (mut l, mut r) = get_bounds_usize(range);
         if l==r{
             return self.data[0][l].clone();
         } else {
