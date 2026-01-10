@@ -1,5 +1,6 @@
-//頂点にコストがある場合
-//HLぶんかい
+//モノイドつきHLぶんかい
+//頂点にコストがあるとする
+//辺にコストがある場合は，cost[v] = (parent[v] と v　の辺のコスト）　として，頂点版からLCAを除外すればいける?
 use ac_library::{Monoid,Segtree};
 pub struct HLD<M:Monoid>{
     graph: Vec<Vec<usize>>,
