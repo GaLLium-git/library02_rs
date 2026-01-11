@@ -22,6 +22,7 @@ impl HLD{
             heavy:vec![usize::MAX;len],
             top:vec![0;len],
             index:vec![0;len],
+            cur:0,
         };
         hld.dfs1(root,root);
         hld.dfs2(root,root);
@@ -76,3 +77,4 @@ impl HLD{
         }
     }
 }
+
