@@ -14,7 +14,7 @@ pub struct HLD<M:Monoid>{
     seg: Segtree<M>,
 }
 
-impl HLD<M:Monoid>{
+impl<M:Monoid> HLD<M> {
     //構築 O(V)
     pub fn new(graph:&Vec<Vec<usize>>, root:usize) -> Self{
         let len = graph.len();
@@ -26,7 +26,8 @@ impl HLD<M:Monoid>{
             heavy:vec![usize::MAX;len],
             top:vec![0;len],
             index:vec![0;len],
-            seg: Segtree<M>::new(len),
+            cur:0,
+            seg: Segtree::<M>::new(len),
         };
         hld.dfs1(root,root);
         hld.dfs2(root,root);
@@ -81,9 +82,20 @@ impl HLD<M:Monoid>{
         }
     }
     
-    
-    pub fn build_seg(&mut self, )
-    pub fn path(&self, mut u:usize, mut v:usize) -> M::S{
-        let mut (prodl,prodr) = (M::identity(),M::identity());
+    //セグ木の構築
+    pub fn build_seg(&mut self, cost: &Vec<M::S>){
+        for v in 0..cost.len(){
+            self.seg.set(self.index[v],cost[v].clone());
+        }
     }
+    
+    
+    pub fn path(&self, mut u:usize, mut v:usize) -> M::S{
+        let (mut prodl, mut prodr) = (M::identity(),M::identity());
+        M::binary_operation(&prodl, &prodr)
+    }
+}
+
+fn main(){
+  eprint!("No bug");
 }
