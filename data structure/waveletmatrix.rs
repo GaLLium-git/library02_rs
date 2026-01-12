@@ -40,9 +40,20 @@ impl WaveletMatrix{
     }
     
     //rangeでのx未満の値の出現回数
-    pub fn rangefreq(range: impl std::ops::RangeBounds<usize>, x:usize) -> usize{
+    pub fn rangefreq(&self, range: impl std::ops::RangeBounds<usize>, x:usize) -> usize{
         let (mut l, mut r) = get_bounds_usize(range);
     }
+    
+    pub fn kth_smallest(&self, range: impl std::ops::RangeBounds<usize>, k:usize) -> usize{
+        let (mut l, mut r) = get_bounds_usize(range);
+    }
+    
+    pub fn kth_largest(&self, range: impl std::ops::RangeBounds<usize>, k:usize) -> usize{
+        let (mut l, mut r) = get_bounds_usize(range);
+        self.kth_smallest(range,r-l-k-1)
+    }
+    
+    
 }
 
 //ビット列に対する操作
