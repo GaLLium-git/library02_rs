@@ -4,7 +4,7 @@ https://github.com/GaLLium-git/library02_rs/edit/main/template.rs
 #![allow(unused)]
 #![allow(non_snake_case)]
 #![allow(dead_code)]
-use library::*;
+use template::*;
 use itertools::*;
 use ordered_float::*;
 use std::collections::*;
@@ -18,7 +18,7 @@ fn main() {
 }
 
 
-pub mod library {
+pub mod template {
 
 //Scanner
 pub struct Scanner {
