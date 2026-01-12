@@ -1,8 +1,5 @@
-//モノイドつきHLぶんかい
-//頂点にコストがあるとする
-//辺にコストがある場合は，cost[v] = (parent[v] と v　の辺のコスト）　として，頂点版からLCAを除外すればいける?
-use ac_library::{Monoid,Segtree};
-pub struct HLD<M:Monoid>{
+//HL分解 (可換モノイド前提)
+pub struct HLD{
     graph: Vec<Vec<usize>>,
     depth: Vec<usize>, //深さ
     parent: Vec<usize>, //親
@@ -10,11 +7,10 @@ pub struct HLD<M:Monoid>{
     heavy: Vec<usize>, //heavyな子
     top: Vec<usize>,  //属するheavyパスの根
     index: Vec<usize>, //列に直したときのインデックス
-    cur: usize, //オイラーツアー用
-    seg: Segtree<M>,
+    cur: usize, //indexの計算用
 }
 
-impl<M:Monoid> HLD<M> {
+impl HLD{
     //構築 O(V)
     pub fn new(graph:&Vec<Vec<usize>>, root:usize) -> Self{
         let len = graph.len();
@@ -27,7 +23,6 @@ impl<M:Monoid> HLD<M> {
             top:vec![0;len],
             index:vec![0;len],
             cur:0,
-            seg: Segtree::<M>::new(len),
         };
         hld.dfs1(root,root);
         hld.dfs2(root,root);
@@ -82,17 +77,15 @@ impl<M:Monoid> HLD<M> {
         }
     }
     
-    //セグ木の構築
-    pub fn build_seg(&mut self, cost: &Vec<M::S>){
-        for v in 0..cost.len(){
-            self.seg.set(self.index[v],cost[v].clone());
-        }
+    //indexでのu->vのパス上の半開区間[l,r)の列を返す
+    pub fn path_ranges(&self, mut u:usize, mut v:usize) -> Vec<(usize,usize)>{
+       let ranges = Vec::new();
+       ranges
     }
     
-    
-    pub fn path(&self, mut u:usize, mut v:usize) -> M::S{
-        let (mut prodl, mut prodr) = (M::identity(),M::identity());
-        M::binary_operation(&prodl, &prodr)
+    //indexでのvの部分木の半開区間[l,r) を返す
+    pub fn subtree_range(&self, mut v:usize) -> (usize,usize){
+        (self.index[v], self.index[v]+self.size[v])
     }
 }
 
