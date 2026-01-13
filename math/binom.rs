@@ -18,12 +18,12 @@ impl Binom{
         Self{fac,ifac}
     }
 
-    pub fn C(n:usize, k:usize) -> Mint{
+    pub fn C(&self, n:usize, k:usize) -> Mint{
         if n < k {return 0;}
         self.fac[n]*self.ifac[n-k]*self.fac[k]
     }
 
-     pub fn H(n:usize, k:usize) -> Mint{
+     pub fn H(&self, n:usize, k:usize) -> Mint{
         self.C(n+k-1,k)
     }
 }
