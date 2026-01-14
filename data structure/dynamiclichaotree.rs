@@ -102,11 +102,12 @@ where
         }
         
     }
+    
     pub fn add(&mut self, f:F){
         self._add(f,0,self.x_min,self.x_max);
     }
     
-    //[l,r)を覆うノードでのｘの代入
+    //[l,r)を覆うノードvでのｘの代入
     fn _get(&self, x:T, v:usize, l:T, r:T) -> T{
         let m = l+(r-l)/2;
         let mut res = (self.eval)(self.tree[v].f, x);
