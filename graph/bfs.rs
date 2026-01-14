@@ -1,8 +1,8 @@
-pub fn bfs(graph: &Vec<Vec<usize>>) -> Vec<usize>{
+pub fn bfs(graph: &Vec<Vec<usize>>, root:usize) -> Vec<usize>{
     let mut que = VecDeque::new();
-    let mut dist = vec![usize::MAX;n+1];
-    que.push_back(1);
-    dist[1]=0;
+    let mut dist = vec![usize::MAX;graph.len()];
+    que.push_back(root);
+    dist[root]=0;
     while !(que.is_empty()) {
         let pos = que.pop_front().unwrap();
         for &nex in graph[pos].iter(){
@@ -24,7 +24,7 @@ fn main() {
       graph[a].push(b);
       graph[b].push(a);
     }
-    let dist = bfs(&graph);
+    let dist = bfs(&graph,1);
     for i in 1..=n{
         println!("{}",dist[i]);
     }
