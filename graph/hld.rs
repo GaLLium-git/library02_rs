@@ -70,25 +70,34 @@ impl HLD{
                 return if self.depth[u] < self.depth[v] {u} else {v};
             }
             if self.depth[self.top[u]] < self.depth[self.top[v]] {
-                v = self.parent[self.top[v]];
-            } else{
-                u = self.parent[self.top[u]];
+                (u,v) = (v,u);
             }
+            u = self.parent[self.top[u]];
         }
     }
     
     //indexでのu->vのパス上の半開区間[l,r)の列を返す
     pub fn path_ranges(&self, mut u:usize, mut v:usize) -> Vec<(usize,usize)>{
-       let ranges = Vec::new();
-       ranges
+        let mut ranges = Vec::new();
+        loop{
+            if self.top[u] == self.top[v]{
+                let l = self.index[u].min(self.index[v]);
+                let r = self.index[u].max(self.index[v])+1;
+                ranges.push((l,r));
+                return ranges;
+            }
+            if self.depth[self.top[u]] < self.depth[self.top[v]]{
+                (u,v) = (v,u);
+            }
+            let l = self.index[self.top[u]];
+            let r = self.index[u]+1;
+            ranges.push((l,r));
+            u = self.parent[self.top[u]];
+       }
     }
     
     //indexでのvの部分木の半開区間[l,r) を返す
-    pub fn subtree_range(&self, mut v:usize) -> (usize,usize){
+    pub fn subtree_range(&self, v:usize) -> (usize,usize){
         (self.index[v], self.index[v]+self.size[v])
     }
-}
-
-fn main(){
-  eprint!("No bug");
 }
