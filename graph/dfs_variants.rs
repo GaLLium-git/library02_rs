@@ -17,3 +17,15 @@ pub fn dfs(graph:&Vec<Vec<usize>>, v:usize, p:usize){
         dfs(nv,graph,seen);
     }
 }
+
+//木のオイラーツアー
+pub fn eulertour(graph:&Vec<Vec<usize>>, root:usize) -> Vec<usize>{
+    tour.push(v);
+    seen[v]=true;
+    for &nv in graph[v].iter(){
+        if !(seen[nv]) {
+           eulertour(nv,graph,seen,tour);
+        }
+    }
+    tour.push(v);
+}
