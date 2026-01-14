@@ -18,7 +18,8 @@ pub fn dfs(graph:&Vec<Vec<usize>>, v:usize, p:usize){
     }
 }
 
-//木のオイラーツアー
+
+//例:木のオイラーツアー
 pub fn eulertour(graph:&Vec<Vec<usize>>, root:usize) -> Vec<usize>{
     tour.push(v);
     seen[v]=true;
