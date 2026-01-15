@@ -1,4 +1,4 @@
-//HL分解 (可換モノイド前提)
+//HL分解 (可換モノイド)
 pub struct HLD{
     graph: Vec<Vec<usize>>,
     depth: Vec<usize>, //深さ
@@ -11,7 +11,7 @@ pub struct HLD{
 }
 
 impl HLD{
-    //構築 O(V)
+    //構築
     pub fn new(graph:&Vec<Vec<usize>>, root:usize) -> Self{
         let len = graph.len();
         let mut hld = Self{
@@ -63,7 +63,7 @@ impl HLD{
         }
     }
     
-    //LCA O(VlogV)
+    //LCA
     pub fn lca(&self, mut u:usize, mut v:usize) -> usize{
         loop{
             if self.top[u] == self.top[v]{
