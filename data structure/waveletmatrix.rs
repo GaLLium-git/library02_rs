@@ -11,7 +11,7 @@ impl WaveletMatrix{
         let mut cur = val.clone();
         for b in (0..=log).rev(){
             for i in 0..cur.len(){
-                if cur[i] >> b == 1{
+                if (cur[i]>>b)&1 == 1{
                     data[b].set(i);
                 }
             }
@@ -50,7 +50,7 @@ impl WaveletMatrix{
         let mut res = 0;
         for b in (0..self.data.len()).rev(){
             if (x>>b)&1 == 1{
-                res += self.data[b].rank0(l) - self.data[b].rank0(r);
+                res += self.data[b].rank0(r) - self.data[b].rank0(l);
                 l = self.data[b].rank1(l) + self.data[b].zero;
                 r = self. data[b].rank1(r) + self.data[b].zero;
             } else{
@@ -66,7 +66,7 @@ impl WaveletMatrix{
         let (mut l, mut r) = get_bounds_usize(range);
         let mut res = 0;
         for b in (0..self.data.len()).rev(){
-            let cnt0 = self.data[b].rank0(l) -self. data[b].rank0(r);
+            let cnt0 = self. data[b].rank0(r) - self.data[b].rank0(l);
             if cnt0 <= k{
                 res |= 1<<b;
                 k -= cnt0;
@@ -125,7 +125,7 @@ impl BitVec{
     
     pub fn build(&mut self){
         self.sum[0] = self.bits[0].count_ones() as usize;
-        for i in 1..=self.sum.len(){
+        for i in 1..self.sum.len(){
             self.sum[i] = self.sum[i-1] + self.bits[i].count_ones() as usize; 
         }
         self.zero -= self.sum.last().unwrap();
@@ -137,7 +137,7 @@ impl BitVec{
     
     //[0,i) での 1の個数
     pub fn rank1(&self, i:usize) -> usize{
-        self.sum[i/64] + (self.bits[i/64] & (1<<(i%64)-1)).count_ones() as usize
+        self.sum[i/64] + (self.bits[i/64] & ((1<<(i%64))-1)).count_ones() as usize
     }
     
     pub fn rank0(&self, i:usize) -> usize{
