@@ -1,6 +1,6 @@
 struct Node{
     children: Vec<char>, //子の配列
-    common: usize, //このノードまでを共有する文字列の数
+    accept: Vec<usize>, //受理する文字列のインデックス
 }
 
 pub struct Trie{
