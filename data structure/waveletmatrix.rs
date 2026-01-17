@@ -2,14 +2,12 @@
 //座圧したほうがいい？
 pub struct WaveletMatrix{
     data: Vec<bitvec>,
-    count0: Vec<usize>,
 }
 
 impl WaveletMatrix{
     pub fn new(val:&Vec<usize>) -> Self{
         let log = val.iter().max().unwrap().ilog2();
         let mut data = vec![bitvec::new(val.len());log+1];
-        let mut count0 = vec![];
         for i in (0..=log).rev(){
             for j in 0..val.len(){
                 if val[j] >> i == 1{
@@ -20,7 +18,6 @@ impl WaveletMatrix{
         }
         Self{
             data,
-            count0,
         }
     }
     
@@ -28,12 +25,12 @@ impl WaveletMatrix{
     pub fn access(&self, i:usize) -> usize{
         let mut res = 0;
         let mut idx = i;
-        for b in 0..data.len(){
+        for b in (0..data.len()).rev(){
             res = res*2 + self.data[b].access(idx);
             if self.data[b].access(idx) == 0{
                 idx = self.data[b].rank0(idx)
             } else {
-                idx = self.data[b].rank1(idx) + self.count0[b];
+                idx = self.data[b].rank1(idx) + self.data[b].count_zeros();
             }
         }
         res
@@ -42,6 +39,16 @@ impl WaveletMatrix{
     //rangeでのx未満の値の出現回数
     pub fn rangefreq(&self, range: impl std::ops::RangeBounds<usize>, x:usize) -> usize{
         let (mut l, mut r) = get_bounds_usize(range);
+        let mut res = 0;
+        for b in (0..data.len()).rev(){
+            
+            if (x>>b)&1 == 0{
+                
+            } else{
+                
+            }
+        }
+        
     }
     
     pub fn kth_smallest(&self, range: impl std::ops::RangeBounds<usize>, k:usize) -> usize{
@@ -59,7 +66,7 @@ impl WaveletMatrix{
 //ビット列に対する操作
 struct bitvec{
     bits: Vec<usize>,
-    cumsum: Vec<usize>,
+    sum: Vec<usize>,
 }
 
 impl bitvec{
@@ -92,5 +99,10 @@ impl bitvec{
     
     pub fn rank0(&self, i:usize) -> usize{
         i - self.rank1(i)
+    }
+    
+    //全体での0の個数
+    pub fn count_zeros(&self) -> usize{
+        self.rank0(self.bits.len()*64)
     }
 }
