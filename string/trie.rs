@@ -1,6 +1,15 @@
 struct Node{
-    children: Vec<char>, //子の配列
-    accept: Vec<usize>, //受理する文字列のインデックス
+    c: Option<char>, //そのノードの文字
+    children: Vec<usize>, //子のインデックスの配列
+}
+
+impl Node{
+    pub fn new(c: Option<char>) -> Self{
+        Self{
+            c,
+            children: vec![usize::MAX;26],
+        }
+    }
 }
 
 pub struct Trie{
@@ -8,10 +17,20 @@ pub struct Trie{
 }
 impl Trie{
     pub fn new() -> Self{
-        Self{tree: Vec::new()},
+        Self{tree: vec![Node::new(None)]}
     }
     
     pub fn insert(&mut self, word: &Vec<char>){
-        
+        let mut now = 0;
+        for &c in word.iter(){
+            let idx = c as usize - 'a' as usize;
+            let mut nxt = self.tree[now].children[idx];
+            if nxt == usize::MAX{
+                nxt = self.tree.len();
+                self.tree.push(Node::new(Some(c)));
+                self.tree[now].children[idx] = nxt;
+            }
+            now = nxt;
+        }
     }
 }
