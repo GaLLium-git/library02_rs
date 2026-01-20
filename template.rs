@@ -10,26 +10,27 @@ use ordered_float::*;
 use std::collections::*;
 
 fn main() {
-    let mut sc=Scanner::new();
-    let a:usize=sc.next();
-    let b:usize=sc.next();
-    let ans= if a*b%2==0{"Even"} else {"Odd"};
+    let mut sc = Scanner::new();
+    let (N,Q):(usize,usize) = (sc.next(),sc.next());
+    let mut A:Vec<usize> = (0..N).map(|_| sc.next()).collect();
+
+    let mut ans = 0;
     println!("{}",ans);
 }
 
 
-pub mod template {
+pub mod template{
 
 //Scanner
-pub struct Scanner {
+pub struct Scanner{
     buffer: std::collections::VecDeque<String>,
 }
 impl Scanner {
-    pub fn new() -> Self {
+    pub fn new() -> Self{
         Scanner {buffer: std::collections::VecDeque::new()}
     }
-    pub fn next<T: std::str::FromStr>(&mut self) -> T {
-        if self.buffer.len() == 0 {
+    pub fn next<T: std::str::FromStr>(&mut self) -> T{
+        if self.buffer.len() == 0{
             let mut input = String::new();
             std::io::stdin().read_line(&mut input).unwrap();
             self.buffer = input.split_whitespace().map(|s| s.to_string()).collect();
