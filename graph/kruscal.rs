@@ -1,25 +1,22 @@
-// unionfindに依存  
-fn main(){
-    let mut sc=Scanner::new();
-    let (n,m):(usize,usize)=(sc.next(),sc.next());
-    let (mut a,mut b,mut c)=(vec![],vec![],vec![]);
-    for i in 0..m{
-        let (ap,bp,cp):(usize,usize,usize)=(sc.next(),sc.next(),sc.next());
-        a.push(ap);
-        b.push(bp);
-        c.push((cp,i));
+pub fn kruscal(N:usize, edges:&Vec<Vec<(usize,usize,usize)>) -> usize{
+    let mut U = vec![]; let mut V = vec![]; let mut C = vec![];
+    for i in 0..edges.len(){
+        let (u,v,cost) = edges[i];
+        U.push(u);
+        V.push(v);
+        C.push(cost,i);
     }
-    c.sort();
+    C.sort();
     
-    let mut uf=ac_library::DSU::new(n+1);
-    let mut ans=0;
-    for &(len,idx) in c.iter(){
-        if !(uf.same(a[idx],b[idx])) {
-            ans+=len;
-            uf.merge(a[idx],b[idx]);
+    let mut uf = ac_library::DSU::new(N+1);
+    let mut res = 0;
+    for &(cost,i) in c.iter(){
+        if !(uf.same(U[i],V[i])) {
+            res += cost;
+            uf.merge(U[i),V[i]);
         }
     }
-    println!("{}",ans);
-    
+    res
 }
+
     
