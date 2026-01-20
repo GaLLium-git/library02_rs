@@ -1,6 +1,4 @@
-/* from
-https://github.com/GaLLium-git/library02_rs/edit/main/template.rs
-*/
+// https://github.com/GaLLium-git/library02_rs/blob/main/template.rs
 #![allow(unused)]
 #![allow(non_snake_case)]
 #![allow(dead_code)]
@@ -8,6 +6,9 @@ use template::*;
 use itertools::*;
 use std::collections::*;
 
+/* 考察
+
+*/
 fn main() {
     let mut sc = Scanner::new();
     let (N,Q):(usize,usize) = (sc.next(),sc.next());
