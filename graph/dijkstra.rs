@@ -1,4 +1,6 @@
-pub fn dijkstra
+pub fn dijkstra(graph:&Vec<Vec<usize>>, root:usize) -> Vec<usize>{
+    
+}
 
 fn main() {
     let mut sc = Scanner::new();
