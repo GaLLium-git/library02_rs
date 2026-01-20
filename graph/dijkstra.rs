@@ -1,3 +1,5 @@
+pub fn dijkstra
+
 fn main() {
     let mut sc = Scanner::new();
     let (N,M):(usize,usize) = (sc.next(),sc.next());
