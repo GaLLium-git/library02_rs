@@ -114,7 +114,7 @@ impl BitVec{
     pub fn new(n:usize) -> Self{
         Self{
             bits: vec![0;n/64+1],
-            sum: vec![0;n/64+1],
+            sum: vec![0;n/64+2],
             zero: n,
         }
     }
@@ -124,9 +124,8 @@ impl BitVec{
     }
     
     pub fn build(&mut self){
-        self.sum[0] = self.bits[0].count_ones() as usize;
         for i in 1..self.sum.len(){
-            self.sum[i] = self.sum[i-1] + self.bits[i].count_ones() as usize; 
+            self.sum[i] = self.sum[i-1] + self.bits[i-1].count_ones() as usize; 
         }
         self.zero -= self.sum.last().unwrap();
     }
