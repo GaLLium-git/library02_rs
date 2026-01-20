@@ -6,7 +6,6 @@ https://github.com/GaLLium-git/library02_rs/edit/main/template.rs
 #![allow(dead_code)]
 use template::*;
 use itertools::*;
-use ordered_float::*;
 use std::collections::*;
 
 fn main() {
