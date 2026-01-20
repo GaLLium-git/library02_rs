@@ -1,36 +1,20 @@
-pub fn bellmanford(edges: &Vec<(usize,usize,i64)>, root:usize) -> Vec<i64>{
-    let mut d = vec![i64::MAX;n+1];
-    d[1]=0;
-    for _ in 0..n-1{
+pub fn bellmanford(N:usize, edges: &Vec<(usize,usize,i64)>, root:usize) -> Vec<i64>{
+    let mut dist = vec![i64::MAX;N+1];
+    dist[root]=0;
+    for _ in 0..N-1{
         for &(u,v,cost) in edges.iter(){
-            if d[u] != i64::MAX && d[v] > d[u]+cost{
-                d[v]=d[u]+cost;
+            if dist[u] != i64::MAX && dist[v] > dist[u]+cost{
+                dist[v] = dist[u]+cost;
             }
         }
     }
-    for _ in 0..n-1{
+    
+    for _ in 0..N-1{
         for &(u,v,cost) in edges.iter(){
-            if d[u] == i64::MIN || (d[u] != i64::MAX && d[v] > d[u]+cost){
-                d[v]=i64::MIN;
+            if dist[u] == i64::MIN || (dist[u] != i64::MAX && dist[v] > d[u]+cost){
+                dist[v]=i64::MIN;
             }
         }
     }
-
-}
-fn main() {
-    let mut sc=Scanner::new();
-    let (n,m):(usize,usize)=(sc.next(),sc.next());
-    let mut edges=vec![];
-    for i in 0..m{
-        let (a,b,c):(usize,usize,i64)=(sc.next(),sc.next(),sc.next());
-        edges.push((a,b,-c));
-    }
-    
-    
-    
-    if d[n]==i64::MIN{
-        println!("inf");
-    }else{
-        println!("{}",-d[n]);
-    }
+    dist
 }
