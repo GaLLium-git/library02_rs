@@ -10,18 +10,17 @@ impl Mo{
     }
     
     //クエリ[l,r) の追加
-    pub fn insert(&mut self, l:usize, r:usize){
+    pub fn insert(&mut self, range: impl std::ops::RangeBounds<usize>){
+        let (l, r) = get_bounds_usize(range);
         let i = self.querys.len();
         self.querys.push((l,r,i));
     }
     
-   
     pub fn solve(&mut self, mut inc_l:impl FnMut(usize), mut inc_r:impl FnMut(usize),
-                            mut dec_l:impl FnMut(usize), mut dec_r:impl FnMut(usize), calc:impl Fn() -> usize) -> Vec<usize>{
+                            mut dec_l:impl FnMut(usize), mut dec_r:impl FnMut(usize), mut calc:impl FnMut(usize)){
         let B = self.querys.len().isqrt();
         self.querys.sort_by_key(|&(l,r,_)| (l/B,r));
         
-        let mut res = vec![0;self.querys.len()];
         let (mut nl, mut nr) = (0,0);
         
         for &(l,r,i) in self.querys.iter(){
@@ -41,8 +40,7 @@ impl Mo{
                 dec_r(nr);
                 nr -= 1;
             }
-            res[i] = calc();
+            calc(i);
         }
-        res
     }
 }
