@@ -9,12 +9,13 @@ fn main(){
         let (l,r):(usize,usize) = (sc.next(),sc.next());
         mo.insert(l..=r);
     }
-    
+
+    let mut ans = vec
     let mut inc_l = |&l:usize| {};
     let mut dec_l = |&l:usize| {};
     let mut inc_r = |&r:usize| {};
     let mut dec_r = |&r:usize| {};
-    let mut calc = |&i:usize| {};
+    let mut calc = |&i:usize| {ans[i] = cur;};
     mo.solve(inc_l,dec_l,inc_r,del_r,calc);
 }
 
