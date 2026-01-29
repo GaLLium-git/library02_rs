@@ -1,65 +1,20 @@
-fn main(){
-    let mut sc = Scanner::new();
-    let (N,Q):(usize,usize) = (sc.next(),sc.next());
-    let mut A:Vec<usize> = (0..N).map(|_| sc.next()).collect();
-    
-    let mut mo = Mo::new();
-    
-    for _ in 0..Q{
-        let (l,r):(usize,usize) = (sc.next(),sc.next());
-        mo.insert(l..=r);
-    }
-
-    let mut ans = vec
-    let mut inc_l = |&l:usize| {};
-    let mut dec_l = |&l:usize| {};
-    let mut inc_r = |&r:usize| {};
-    let mut dec_r = |&r:usize| {};
-    let mut calc = |&i:usize| {ans[i] = cur;};
-    mo.solve(inc_l,dec_l,inc_r,del_r,calc);
-}
-
-//Scanner
-pub struct Scanner{
-    buffer: std::collections::VecDeque<String>,
-}
-impl Scanner {
-    pub fn new() -> Self{
-        Scanner {buffer: std::collections::VecDeque::new()}
-    }
-    pub fn next<T: std::str::FromStr>(&mut self) -> T{
-        if self.buffer.len() == 0{
-            let mut input = String::new();
-            std::io::stdin().read_line(&mut input).unwrap();
-            self.buffer = input.split_whitespace().map(|s| s.to_string()).collect();
-        }
-        self.buffer.pop_front().unwrap().parse::<T>().ok().unwrap()
-    }
-}
-
-//range型を[l,r)に直す関数
-pub fn get_bounds_usize(range: impl std::ops::RangeBounds<usize>) -> (usize,usize){
-    let l = match range.start_bound() {
-        std::ops::Bound::Included(l) => *l,
-        std::ops::Bound::Excluded(l) => *l+1,
-        std::ops::Bound::Unbounded => 0,
-    };
-    let r = match range.end_bound() {
-        std::ops::Bound::Included(r) => *r+1,
-        std::ops::Bound::Excluded(r) => *r,
-        std::ops::Bound::Unbounded => usize::MAX,
-    };
-    (l,r)
-}
-
 pub struct Mo{
     querys: Vec<(usize,usize,usize)>,
+    //残りの状態
+    A: Vec<usize>,
+    ans: Vec<usize>,
+    cnt: Vec<usize>,
+    cur:usize,
 }
 
 impl Mo{
-    pub fn new() -> Self{
+    pub fn new(A:Vec<usize>) -> Self{
         Self{
             querys: vec![],
+            A,
+            ans: vec![0;200005],
+            cnt: vec![0;200005],
+            cur: 0,
         }
     }
     
@@ -70,31 +25,58 @@ impl Mo{
         self.querys.push((l,r,i));
     }
     
-    pub fn solve(&mut self, mut inc_l:impl FnMut(usize), mut dec_l:impl FnMut(usize),
-                            mut inc_r:impl FnMut(usize), mut dec_r:impl FnMut(usize), mut calc:impl FnMut(usize)){
+    fn inc_l(&mut self, l:usize){
+        self.cur -= C3(self.cnt[self.A[l]]);
+        self.cnt[self.A[l]] -= 1;
+        self.cur += C3(self.cnt[self.A[l]]);
+    }
+    
+    fn dec_l(&mut self, l:usize){
+        self.cur -= C3(self.cnt[self.A[l-1]]);
+        self.cnt[self.A[l-1]] += 1;
+        self.cur += C3(self.cnt[self.A[l-1]]);
+    }
+    
+    fn inc_r(&mut self, r:usize){
+        self.cur -= C3(self.cnt[self.A[r]]);
+        self.cnt[self.A[r]] += 1;
+        self.cur += C3(self.cnt[self.A[r]]);
+    }
+    
+    fn dec_r(&mut self, r:usize){
+        self.cur -= C3(self.cnt[self.A[r-1]]);
+        self.cnt[self.A[r-1]] -= 1;
+        self.cur += C3(self.cnt[self.A[r-1]]);
+    }
+    
+    fn calc(&mut self, i:usize){
+        self.ans[i] = self.cur;
+    }
+    
+    pub fn solve(&mut self){
         let B = self.querys.len().isqrt();
         self.querys.sort_by_key(|&(l,r,_)| (l/B,r));
-        
         let (mut nl, mut nr) = (0,0);
         
-        for &(l,r,i) in self.querys.iter(){
+        let querys = self.querys.clone();
+        for &(l,r,i) in querys.iter(){
             while nl < l{
-                inc_l(nl);
+                self.inc_l(nl);
                 nl += 1;
             }
             while nl > l{
-                dec_l(nl);
+                self.dec_l(nl);
                 nl -= 1;
             }
             while nr < r{
-                inc_r(nr);
+                self.inc_r(nr);
                 nr += 1;
             }
             while nr > r{
-                dec_r(nr);
+                self.dec_r(nr);
                 nr -= 1;
             }
-            calc(i);
+            self.calc(i);
         }
     }
 }
