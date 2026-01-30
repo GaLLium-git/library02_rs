@@ -1,23 +1,30 @@
 struct Node{
-    c: Option<char>, //そのノードの文字
     children: Vec<usize>, //子のインデックスの配列
+    //残りの状態
+    cnt: usize,
 }
 
 impl Node{
-    pub fn new(c: Option<char>) -> Self{
+    pub fn new() -> Self{
         Self{
-            c,
             children: vec![usize::MAX;26],
+            cnt: 0,
         }
     }
 }
 
 pub struct Trie{
     tree: Vec<Node>,
+    //残りの状態
+    ans: usize, 
 }
+
 impl Trie{
     pub fn new() -> Self{
-        Self{tree: vec![Node::new(None)]}
+        Self{
+            tree: vec![Node::new()],
+            ans: 0,
+        }
     }
     
     pub fn insert(&mut self, word: &Vec<char>){
@@ -27,10 +34,13 @@ impl Trie{
             let mut nxt = self.tree[now].children[idx];
             if nxt == usize::MAX{
                 nxt = self.tree.len();
-                self.tree.push(Node::new(Some(c)));
+                self.tree.push(Node::new());
                 self.tree[now].children[idx] = nxt;
             }
             now = nxt;
+            //処理
+            self.ans += self.tree[now].cnt;
+            self.tree[now].cnt += 1;
         }
     }
 }
