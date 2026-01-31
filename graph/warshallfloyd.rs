@@ -1,5 +1,5 @@
 pub fn warshall_floyd(N:usize, edges:&Vec<(usize,usize,usize)>) -> Vec<Vec<usize>>{
-   let mut dist = vec![vec![usize::MAX/2;N+3];N+3];
+    let mut dist = vec![vec![usize::MAX/2;N+3];N+3];
     for i in 1..=N{
         dist[i][i] = 0;
     }
