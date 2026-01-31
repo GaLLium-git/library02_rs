@@ -1,4 +1,4 @@
-pub fn kruscal(N:usize, edges:&Vec<Vec<(usize,usize,usize)>) -> usize{
+pub fn kruscal(N:usize, edges:&Vec<(usize,usize,usize)>) -> usize{
     let mut U = vec![]; let mut V = vec![]; let mut C = vec![];
     for i in 0..edges.len(){
         let (u,v,cost) = edges[i];
