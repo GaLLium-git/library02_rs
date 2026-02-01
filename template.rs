@@ -13,7 +13,8 @@ fn main() {
     let mut sc = Scanner::new();
     let (N,Q):(usize,usize) = (sc.next(),sc.next());
     let mut A:Vec<usize> = (0..N).map(|_| sc.next()).collect();
-
+    let mut S:Vec<char> = sc.next::<String>().chars().collect();
+    
     let mut ans = 0;
     println!("{}",ans);
 }
