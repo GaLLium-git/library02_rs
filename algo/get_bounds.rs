@@ -23,8 +23,8 @@ pub fn get_bounds_f64(range: impl std::ops::RangeBounds<f64>) -> (f64,f64){
         std::ops::Bound::Unbounded => 0.0,
     };
     let r = match range.end_bound() {
-        std::ops::Bound::Included(r) => *r+1e-9,
-        std::ops::Bound::Excluded(r) => *r+EPS,
+        std::ops::Bound::Included(r) => *r+EPS,
+        std::ops::Bound::Excluded(r) => *r,
         std::ops::Bound::Unbounded => f64::MAX,
     };
     (l,r)
