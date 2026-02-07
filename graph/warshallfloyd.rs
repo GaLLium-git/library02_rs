@@ -3,10 +3,9 @@ pub fn warshall_floyd(N:usize, edges:&Vec<(usize,usize,usize)>) -> Vec<Vec<usize
     for i in 1..=N{
         dist[i][i] = 0;
     }
-    for _ in 0..M{
-        let (a,b,t):(usize,usize,usize)  = (sc.next(),sc.next(),sc.next());
-        dist[a][b] = t;
-        dist[b][a] = t;
+    for &(a,b,c) in edges.iter(){
+        dist[a][b] = c;
+        dist[b][a] = c;
     }
     for k in 1..=N{
         for i in 1..=N{
@@ -15,4 +14,5 @@ pub fn warshall_floyd(N:usize, edges:&Vec<(usize,usize,usize)>) -> Vec<Vec<usize
             }
         }
     }
+    dist
 }
