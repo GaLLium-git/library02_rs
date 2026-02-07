@@ -5,7 +5,6 @@ AtCoder上でのコンテスト用のライブラリ
 
 ----
 #### やること
-- ワーシャルフロイドの関数化
-- trieが未完成
-- 行列
-- dp
+Manacher  
+binary trie  
+dp
