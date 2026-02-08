@@ -1,7 +1,7 @@
 type Mint = ac_library::ModInt998244353;
 use ac_library::convolution;
 
-pub trait fps{
+pub trait Fps{
     fn add(&self, rhs:&Vec<Mint>, N:usize) -> Vec<Mint>;
     fn sub(&self, rhs:&Vec<Mint>, N:usize) -> Vec<Mint>;
     fn mul(&self, rhs:&Vec<Mint>, N:usize) -> Vec<Mint>;
@@ -17,7 +17,7 @@ pub trait fps{
     fn taylor_shift(&self, c:Mint);
 }
 
-impl fps for Vec<Mint>{
+impl Fps for Vec<Mint>{
     fn add(&self, rhs:&Vec<Mint>, N:usize) -> Vec<Mint>{
         let mut res = vec![Mint::new(0);N];
         for i in 0..N.min(self.len()) {
@@ -74,8 +74,8 @@ impl fps for Vec<Mint>{
     
     fn bibun(&self, N:usize) -> Vec<Mint>{
         let mut res = vec![Mint::new(0);N];
-        N = N.min(self.len()-1);
-        for i in 0..N{
+        let L = N.min(self.len()-1);
+        for i in 0..L{
             res[i] = self[i+1] * Mint::new(i+1);
         }
         res
@@ -83,12 +83,12 @@ impl fps for Vec<Mint>{
     
     fn sekibun(&self, N:usize) -> Vec<Mint>{
         let mut res = vec![Mint::new(0);N];
-        N = N.min(self.len()+1);
+        let L = N.min(self.len()+1);
         let mut modinv = vec![Mint::new(1);N+3]; //逆元の列挙
         for i in 2..modinv.len(){
             modinv[i] = -Mint::new(998244353/i) * modinv[998244353%i];
         }
-        for i in 1..N{
+        for i in 1..L{
             res[i] = self[i-1] * modinv[i];
         }
         res
