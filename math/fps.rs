@@ -1,13 +1,24 @@
-//もしかしたら関数にした方が使い勝手がいいかもしれない
 type Mint = ac_library::ModInt998244353;
 use ac_library::convolution;
 
 pub trait fps{
-    fn 
+    fn add(&self, rhs:&Vec<Mint>, N:usize) -> Vec<Mint>
+    fn sub(&self, rhs:&Vec<Mint>, N:usize) -> Vec<Mint>
+    fn mul(&self, rhs:&Vec<Mint>, N:usize) -> Vec<Mint>
+    fn mul_const(&self, c:Mint) -> Vec<Mint>
+    fn inv(&self, N:usize) -> Vec<Mint>
+    fn bibun(&self, N:usize) -> Vec<Mint>
+    fn sekibun(&self, N:usize) -> Vec<Mint>
+    fn log(&self, N:usize) -> Vec<Mint> 
+    fn exp(&self, N:usize) -> Vec<Mint>
+    fn pow(&self, k:usize, N:usize) -> Vec<Mint>
+    fn assign(&self, c:Mint) -> Mint
+    fn bostan_mori(&self, Q:&Vec<Mint>, N:usize) -> Mint
+    fn taylor_shift(&self, c:Mint)
 }
 
 impl fps for Vec<Mint>{
-    pub fn add(&self, rhs:&Vec<Mint>, N:usize) -> self{
+    fn add(&self, rhs:&Vec<Mint>, N:usize) -> Vec<Mint>{
         let mut res = vec![Mint::new(0);N];
         for i in 0..N.min(self.len()) {
             res[i] += self[i];
@@ -18,7 +29,7 @@ impl fps for Vec<Mint>{
         res
     }
     
-    pub fn sub(&self, rhs:&Vec<Mint>, N:usize) -> self{
+    fn sub(&self, rhs:&Vec<Mint>, N:usize) -> Vec<Mint>{
         let mut res = vec![Mint::new(0);N];
         for i in 0..N.min(self.len()) {
             res[i] += self[i];
@@ -29,15 +40,13 @@ impl fps for Vec<Mint>{
         res
     }
     
-    //乗法 O(NlogN)
-    pub fn mul(&self, rhs:&Vec<Mint>, N:usize) -> self {
+    fn mul(&self, rhs:&Vec<Mint>, N:usize) -> Vec<Mint>{
         let mut res = convolution(&self[..self.len().min(N)], &rhs[..rhs.len().min(N)]);
         res.resize(N,Mint::new(0));
         res
     }
     
-    //定数倍 O(N)
-    pub fn mul_const(&self, c:Mint) -> self{
+    fn mul_const(&self, c:Mint) -> Vec<Mint>{
         let mut res = vec![Mint::new(0);self.len()];
         for i in 0..self.len(){
             res[i] = self[i] * c;
@@ -45,9 +54,7 @@ impl fps for Vec<Mint>{
         res
     }
     
-
-    //逆元の前N項 O(NlogN)
-    pub fn inv(&self,N:usize) -> self{
+    fn inv(&self, N:usize) -> Vec<Mint>{
         let mut res = Vec::with_capacity(N);
         res.push(Mint::new(1)/self[0]);
         while res.len() < N{
@@ -65,37 +72,33 @@ impl fps for Vec<Mint>{
         res
     }
     
-    //微分 O(N)
-    pub fn bibun(&self,N:usize) -> self{
+    fn bibun(&self, N:usize) -> Vec<Mint>{
         let mut res = vec![Mint::new(0);N];
-        let lim = N.min(self.len()-1);
-        for i in 0..lim{
+        N = N.min(self.len()-1);
+        for i in 0..N{
             res[i] = self[i+1] * Mint::new(i+1);
         }
         res
     }
     
-    //積分 O(N)
-    pub fn sekibun(&self,N:usize) -> self{
+    fn sekibun(&self, N:usize) -> Vec<Mint>{
         let mut res = vec![Mint::new(0);N];
-        let lim = N.min(self.len()+1);
-        let mut modinv = vec![Mint::new(1);lim + 3]; //逆元の列挙
+        N = N.min(self.len()+1);
+        let mut modinv = vec![Mint::new(1);N+3]; //逆元の列挙
         for i in 2..modinv.len(){
             modinv[i] = -Mint::new(998244353/i) * modinv[998244353%i];
         }
-        for i in 1..lim{
+        for i in 1..N{
             res[i] = self[i-1] * modinv[i];
         }
         res
     }
     
-    //logの前N項 O(NlogN) 定数項が1
-    pub fn log(&self,N:usize) -> self{
+    fn log(&self, N:usize) -> Vec<Mint>{
         (self.bibun(N-1).mul(&self.inv(N-1),N-1)).sekibun(N)
     }
     
-    //expの前N項 O(NlogN) 定数項が0
-    pub fn exp(&self,N:usize) -> self{
+    fn exp(&self, N:usize) -> Vec<Mint>{
         let mut res = Vec::with_capacity(N);
         res.push(Mint::new(1));
         while res.len() < N{
@@ -113,13 +116,11 @@ impl fps for Vec<Mint>{
         res
     }
     
-    //累乗の前N項 O(NlogN) 定数項が1
-    pub fn pow(&self, k:usize, N:usize) -> self{
+    fn pow(&self, k:usize, N:usize) -> Vec<Mint>{
         (self.log(N).mul_const(Mint::new(k))).exp(N) 
     }
-    
-    //値の代入 O(N)
-    pub fn assign(&self,c:Mint) -> Mint{
+
+    fn assign(&self, c:Mint) -> Mint{
         let mut res = Mint::new(0);
         for i in 0..self.len(){
             res *= c;
@@ -128,8 +129,7 @@ impl fps for Vec<Mint>{
         res
     }
     
-    //Bostan-Mori法 O(dlogdlogN)
-    pub fn bostan_mori(&self, Q:&Vec<Mint>, N:usize) -> Mint{
+    fn bostan_mori(&self, Q:&Vec<Mint>, N:usize) -> Mint{
         if N == 0 { return self[0]/Q[0]; }
         let d = Q.len();
         let mut Q_neg = Q.clone();
@@ -147,7 +147,7 @@ impl fps for Vec<Mint>{
         U.bostan_mori(&V,N/2)
     }
     
-    fn taylor_shift(&self,c:Mint){
+    fn taylor_shift(&self, c:Mint){
         
     } 
 }
