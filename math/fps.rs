@@ -2,19 +2,19 @@ type Mint = ac_library::ModInt998244353;
 use ac_library::convolution;
 
 pub trait fps{
-    fn add(&self, rhs:&Vec<Mint>, N:usize) -> Vec<Mint>
-    fn sub(&self, rhs:&Vec<Mint>, N:usize) -> Vec<Mint>
-    fn mul(&self, rhs:&Vec<Mint>, N:usize) -> Vec<Mint>
-    fn mul_const(&self, c:Mint) -> Vec<Mint>
-    fn inv(&self, N:usize) -> Vec<Mint>
-    fn bibun(&self, N:usize) -> Vec<Mint>
-    fn sekibun(&self, N:usize) -> Vec<Mint>
-    fn log(&self, N:usize) -> Vec<Mint> 
-    fn exp(&self, N:usize) -> Vec<Mint>
-    fn pow(&self, k:usize, N:usize) -> Vec<Mint>
-    fn assign(&self, c:Mint) -> Mint
-    fn bostan_mori(&self, Q:&Vec<Mint>, N:usize) -> Mint
-    fn taylor_shift(&self, c:Mint)
+    fn add(&self, rhs:&Vec<Mint>, N:usize) -> Vec<Mint>;
+    fn sub(&self, rhs:&Vec<Mint>, N:usize) -> Vec<Mint>;
+    fn mul(&self, rhs:&Vec<Mint>, N:usize) -> Vec<Mint>;
+    fn mul_const(&self, c:Mint) -> Vec<Mint>;
+    fn inv(&self, N:usize) -> Vec<Mint>;
+    fn bibun(&self, N:usize) -> Vec<Mint>;
+    fn sekibun(&self, N:usize) -> Vec<Mint>;
+    fn log(&self, N:usize) -> Vec<Mint>; 
+    fn exp(&self, N:usize) -> Vec<Mint>;
+    fn pow(&self, k:usize, N:usize) -> Vec<Mint>;
+    fn assign(&self, c:Mint) -> Mint;
+    fn bostan_mori(&self, Q:&Vec<Mint>, N:usize) -> Mint;
+    fn taylor_shift(&self, c:Mint);
 }
 
 impl fps for Vec<Mint>{
