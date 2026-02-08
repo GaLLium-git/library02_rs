@@ -2,23 +2,22 @@
 type Mint = ac_library::ModInt998244353;
 use ac_library::convolution;
 
-trait 
-
-impl fps_functions for Vec<Mint>{
+trait fps{
     
-    //加法 O(N)
-    pub fn add(&self, rhs:&Self, N:usize) -> Self{
+}
+
+impl fps for Vec<Mint>{
+    pub fn add(&self, rhs:&Vec<Mint>, N:usize) -> Vec<Mint>{
         let mut res = vec![Mint::new(0);N];
-        for i in 0..N.min(self.seq.len()) {
-            res[i] += self.seq[i];
+        for i in 0..N.min(self.len()) {
+            res[i] += self[i];
         }
-        for i in 0..N.min(rhs.seq.len()) {
-            res[i] += rhs.seq[i];
+        for i in 0..N.min(rhs.len()) {
+            res[i] += rhs[i];
         }
-        Self{seq: res}
+        res
     }
     
-    //減法 O(N)
     pub fn sub(&self, rhs:&Self, N:usize) -> Self{
         let mut res = vec![Mint::new(0);N];
         for i in 0..N.min(self.seq.len()) {
