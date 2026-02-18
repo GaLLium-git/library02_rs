@@ -93,11 +93,13 @@ impl Fps for Vec<Mint>{
         }
         res
     }
-    
+
+    //定数項が1
     fn log(&self, N:usize) -> Vec<Mint>{
         (self.bibun(N-1).mul(&self.inv(N-1),N-1)).sekibun(N)
     }
-    
+
+    //定数項が0
     fn exp(&self, N:usize) -> Vec<Mint>{
         let mut res = Vec::with_capacity(N);
         res.push(Mint::new(1));
@@ -115,7 +117,8 @@ impl Fps for Vec<Mint>{
         }
         res
     }
-    
+
+    //定数項が1
     fn pow(&self, k:usize, N:usize) -> Vec<Mint>{
         (self.log(N).mul_const(Mint::new(k))).exp(N) 
     }
