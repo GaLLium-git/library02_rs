@@ -76,7 +76,6 @@ impl Fps for [Mint]{
         }
         res
     }
-    
     fn sekibun(&self) -> Vec<Mint>{
         let mut res = vec![Mint::new(0);self.len()+1];
         let mut modinv = vec![Mint::new(1);self.len()+3]; //逆元の列挙
