@@ -55,11 +55,11 @@ impl Fps for [Mint]{
     fn inv(&self, N:usize) -> Vec<Mint>{
         let mut res = Vec::with_capacity(N);
         res.push(Mint::new(1)/self[0]);
-        while res.len() < N{
+        while res.len() < self.len()
             //ニュートン法 g=g(2-gf) 精度preL -> L
             //-ggf[preL..L] = -(g * gf[preL..L])[0..L-preL]をgに連結する
             let preL = res.len();
-            let L = (preL*2).min(N);
+            let L = (preL*2).min(self.len());
             let mut rhs = res.mul(&self[..L]);
             let mut new = res.mul(&rhs[prel..L]);
             for i in 0..L-preL{
