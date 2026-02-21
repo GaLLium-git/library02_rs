@@ -2,16 +2,16 @@ type Mint = ac_library::ModInt998244353;
 use ac_library::convolution;
 
 pub trait Fps{
-    fn add(&self, rhs:&[Mint], N:usize) -> Vec<Mint>;
-    fn sub(&self, rhs:&[Mint], N:usize) -> Vec<Mint>;
-    fn mul(&self, rhs:&[Mint], N:usize) -> Vec<Mint>;
+    fn add(&self, rhs:&[Mint]) -> Vec<Mint>;
+    fn sub(&self, rhs:&[Mint]) -> Vec<Mint>;
+    fn mul(&self, rhs:&[Mint]) -> Vec<Mint>;
     fn mul_const(&self, c:Mint) -> Vec<Mint>;
-    fn inv(&self, N:usize) -> Vec<Mint>;
-    fn bibun(&self, N:usize) -> Vec<Mint>;
-    fn sekibun(&self, N:usize) -> Vec<Mint>;
-    fn log(&self, N:usize) -> Vec<Mint>; 
-    fn exp(&self, N:usize) -> Vec<Mint>;
-    fn pow(&self, k:usize, N:usize) -> Vec<Mint>;
+    fn inv(&self) -> Vec<Mint>;
+    fn bibun(&self) -> Vec<Mint>;
+    fn sekibun(&self) -> Vec<Mint>;
+    fn log(&self) -> Vec<Mint>; 
+    fn exp(&self) -> Vec<Mint>;
+    fn pow(&self, k:usize) -> Vec<Mint>;
     fn assign(&self, c:Mint) -> Mint;
     fn bostan_mori(&self, Q:&[Mint], N:usize) -> Mint;
     fn taylor_shift(&self, c:Mint);
@@ -90,12 +90,12 @@ impl Fps for [Mint]{
     }
 
     //定数項が1
-    fn log(&self, N:usize) -> Vec<Mint>{
-        (self.bibun().mul(&self.inv(N-1))[..N-1].sekibun();
+    fn log(&self) -> Vec<Mint>{
+        (self.bibun().mul(&self.inv())[..N-1].sekibun();
     }
 
     //定数項が0
-    fn exp(&self, N:usize) -> Vec<Mint>{
+    fn exp(&self) -> Vec<Mint>{
         let mut res = Vec::with_capacity(N);
         res.push(Mint::new(1));
         while res.len() < N{
@@ -113,8 +113,8 @@ impl Fps for [Mint]{
     }
 
     //定数項が1
-    fn pow(&self, k:usize, N:usize) -> Vec<Mint>{
-        (self.log(N).mul_const(Mint::new(k))).exp(N) 
+    fn pow(&self, k:usize) -> Vec<Mint>{
+        (self.log().mul_const(Mint::new(k))).exp() 
     }
 
     fn assign(&self, c:Mint) -> Mint{
