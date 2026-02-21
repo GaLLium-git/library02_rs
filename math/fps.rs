@@ -52,7 +52,7 @@ impl Fps for [Mint]{
         res
     }
     
-    fn inv(&self, N:usize) -> Vec<Mint>{
+    fn inv(&self) -> Vec<Mint>{
         let mut res = Vec::with_capacity(N);
         res.push(Mint::new(1)/self[0]);
         while res.len() < self.len()
