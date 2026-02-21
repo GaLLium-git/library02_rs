@@ -91,7 +91,7 @@ impl Fps for [Mint]{
 
     //定数項が1
     fn log(&self) -> Vec<Mint>{
-        (self.bibun().mul(&self.inv())[..N-1].sekibun();
+        (self.bibun().mul(&self.inv())[..self.len()-1].sekibun();
     }
 
     //定数項が0
@@ -100,13 +100,13 @@ impl Fps for [Mint]{
         res.push(Mint::new(1));
         while res.len() < N{
             //ニュートン法 g=g(1-log(g)+f) 精度preL -> L
-            //g(-log(g)+f)[preL..L] = -(g * (log(g)-f)[preL..L])[0..L-preL]をgに連結する
+            //g(-log(g)+f)[preL..L] = (g * (-log(g)+f)[preL..L])[0..L-preL]をgに連結する
             let preL = res.len();
-            let L = (preL*2).min(N);
-            let mut rhs = res.log(L).sub(&self[..L]);
+            let L = (preL*2).min(N);res.resize(L,Mint::new(0));
+            let mut rhs = self[..L].sub(&res.log());
             let mut new = res.mul(&rhs[preL..L]);
             for i in 0..L-preL {
-                res.push(-new[i]);
+                res.push(new[i]);
             }
         }
         res
