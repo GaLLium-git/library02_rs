@@ -1,4 +1,3 @@
-type Mint = ac_library::ModInt998244353;
 pub struct Binom{
     fac: Vec<Mint>,
     ifac: Vec<Mint>,
@@ -19,8 +18,8 @@ impl Binom{
     }
 
     pub fn C(&self, n:usize, k:usize) -> Mint{
-        if n < k {return 0;}
-        self.fac[n]*self.ifac[n-k]*self.fac[k]
+        if n < k {return Mint::new(0);}
+        self.fac[n]*self.ifac[n-k]*self.ifac[k]
     }
 
      pub fn H(&self, n:usize, k:usize) -> Mint{
