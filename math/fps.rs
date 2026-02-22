@@ -19,7 +19,7 @@ pub trait Fps{
 
 impl Fps for [Mint]{
     fn add(&self, rhs:&[Mint]) -> Vec<Mint>{
-        let mut res = vec![Mint::new(0);self.len().max(res.len())];
+        let mut res = vec![Mint::new(0);self.len().max(rhs.len())];
         for i in 0..self.len(){
             res[i] += self[i];
         }
@@ -30,7 +30,7 @@ impl Fps for [Mint]{
     }
     
     fn sub(&self, rhs:&[Mint]) -> Vec<Mint>{
-        let mut res = vec![Mint::new(0);self.len().max(res.len())];
+        let mut res = vec![Mint::new(0);self.len().max(rhs.len())];
         for i in 0..self.len(){
             res[i] += self[i];
         }
@@ -41,7 +41,7 @@ impl Fps for [Mint]{
     }
     
     fn mul(&self, rhs:&[Mint]) -> Vec<Mint>{
-        convolution(&self, &rhs);
+        convolution(&self, &rhs)
     }
     
     fn mul_const(&self, c:Mint) -> Vec<Mint>{
@@ -53,7 +53,7 @@ impl Fps for [Mint]{
     }
     
     fn inv(&self) -> Vec<Mint>{
-        let mut res = Vec::with_capacity(N);
+        let mut res = Vec::with_capacity(self.len());
         res.push(Mint::new(1)/self[0]);
         while res.len() < self.len()
             //ニュートン法 g=g(2-gf) 精度preL -> L
@@ -61,7 +61,7 @@ impl Fps for [Mint]{
             let preL = res.len();
             let L = (preL*2).min(self.len());
             let mut rhs = res.mul(&self[..L]);
-            let mut new = res.mul(&rhs[prel..L]);
+            let mut new = res.mul(&rhs[preL..L]);
             for i in 0..L-preL{
                 res.push(-new[i]);
             }
@@ -91,12 +91,12 @@ impl Fps for [Mint]{
 
     //定数項が1
     fn log(&self) -> Vec<Mint>{
-        (self.bibun().mul(&self.inv())[..self.len()-1].sekibun();
+        (self.bibun().mul(&self.inv()))[..self.len()-1].sekibun();
     }
 
     //定数項が0
     fn exp(&self) -> Vec<Mint>{
-        let mut res = Vec::with_capacity(N);
+        let mut res = Vec::with_capacity(self.len());
         res.push(Mint::new(1));
         while res.len() < N{
             //ニュートン法 g=g(1-log(g)+f) 精度preL -> L
@@ -133,9 +133,9 @@ impl Fps for [Mint]{
         for i in (1..d).step_by(2) {
             Q_neg[i] *= Mint::new(-1);
         }
-        let mut V = Q.mul(&Q_neg,2*d);
+        let mut V = Q.mul(&Q_neg);
         V = V.into_iter().step_by(2).collect();
-        let mut U = self.mul(&Q_neg,2*d);
+        let mut U = self.mul(&Q_neg);
         if N % 2 == 0 { 
             U = U.into_iter().step_by(2).collect();
         } else {
