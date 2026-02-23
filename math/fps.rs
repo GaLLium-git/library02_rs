@@ -2,9 +2,9 @@ type Mint = ac_library::ModInt998244353;
 use ac_library::convolution;
 
 pub trait Fps{
-    fn add(&self, rhs:Vec<Mint>) -> Vec<Mint>;
-    fn sub(&self, rhs:Vec<Mint>) -> Vec<Mint>;
-    fn mul(&self, rhs:Vec<Mint>) -> Vec<Mint>;
+    fn add(&self, rhs:&[Mint]) -> Vec<Mint>;
+    fn sub(&self, rhs:&[Mint]) -> Vec<Mint>;
+    fn mul(&self, rhs:&[Mint]) -> Vec<Mint>;
     fn mul_const(&self, c:Mint) -> Vec<Mint>;
     fn inv(&self) -> Vec<Mint>;
     fn bibun(&self) -> Vec<Mint>;
@@ -13,12 +13,12 @@ pub trait Fps{
     fn exp(&self) -> Vec<Mint>;
     fn pow(&self, k:usize) -> Vec<Mint>;
     fn assign(&self, c:Mint) -> Mint;
-    fn bostan_mori(&self, Q:Vec<Mint>, N:usize) -> Mint;
+    fn bostan_mori(&self, Q:&[Mint], N:usize) -> Mint;
     fn taylor_shift(&self, c:Mint);
 }
 
 impl Fps for [Mint]{
-    fn add(&self, rhs:Vec<Mint>) -> Vec<Mint>{
+    fn add(&self, rhs:&[Mint]) -> Vec<Mint>{
         let mut res = vec![Mint::new(0);self.len().max(rhs.len())];
         for i in 0..self.len(){
             res[i] += self[i];
@@ -29,7 +29,7 @@ impl Fps for [Mint]{
         res
     }
     
-    fn sub(&self, rhs:Vec<Mint>) -> Vec<Mint>{
+    fn sub(&self, rhs:&[Mint]) -> Vec<Mint>{
         let mut res = vec![Mint::new(0);self.len().max(rhs.len())];
         for i in 0..self.len(){
             res[i] += self[i];
@@ -40,8 +40,8 @@ impl Fps for [Mint]{
         res
     }
     
-    fn mul(&self, rhs:Vec<Mint>) -> Vec<Mint>{
-        convolution(&self, &rhs)
+    fn mul(&self, rhs:&[Mint]) -> Vec<Mint>{
+        convolution(&self, rhs)
     }
     
     fn mul_const(&self, c:Mint) -> Vec<Mint>{
@@ -127,7 +127,7 @@ impl Fps for [Mint]{
         res
     }
     
-    fn bostan_mori(&self, Q:Vec<Mint>, N:usize) -> Mint{
+    fn bostan_mori(&self, Q:&[Mint], N:usize) -> Mint{
         if N == 0 { return self[0]/Q[0]; }
         let d = Q.len();
         let mut Q_neg = Q.clone();
