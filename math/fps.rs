@@ -51,14 +51,14 @@ impl Fps for [Mint]{
         res
     }
     
-    fn inv(&self) -> Vec<Mint>{
-        let mut res = Vec::with_capacity(self.len());
+    fn inv(&self, len:usize) -> Vec<Mint>{
+        let mut res = Vec::with_capacity(len);
         res.push(Mint::new(1)/self[0]);
-        while res.len() < self.len(){
+        while res.len() < len{
             //ニュートン法 g=g(2-gf) 精度preL -> L
             //-ggf[preL..L] = -(g * gf[preL..L])[0..L-preL]をgに連結する
             let preL = res.len();
-            let L = (preL*2).min(self.len());
+            let L = (preL*2).min(len);
             let mut rhs = res.mul(&self[..L]);
             let mut new = res.mul(&rhs[preL..L]);
             for i in 0..L-preL{
@@ -89,15 +89,15 @@ impl Fps for [Mint]{
     }
 
     //定数項が1
-    fn log(&self) -> Vec<Mint>{
-        (self.bibun().mul(&self.inv()))[..self.len()-1].sekibun()
+    fn log(&self, len:usize) -> Vec<Mint>{
+        (self.bibun().mul(&self.inv(len)))[..len-1].sekibun()
     }
 
     //定数項が0
-    fn exp(&self) -> Vec<Mint>{
-        let mut res = Vec::with_capacity(self.len());
+    fn exp(&self, len:usize) -> Vec<Mint>{
+        let mut res = Vec::with_capacity(len);
         res.push(Mint::new(1));
-        while res.len() < self.len(){
+        while res.len() < len{
             //ニュートン法 g=g(1-log(g)+f) 精度preL -> L
             //g(-log(g)+f)[preL..L] = (g * (-log(g)+f)[preL..L])[0..L-preL]をgに連結する
             let preL = res.len();
