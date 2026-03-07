@@ -1,11 +1,10 @@
 type Mint = ac_library::ModInt998244353;
-
 pub trait Fps{
     fn add(&self, rhs:&[Mint]) -> Vec<Mint>;
     fn sub(&self, rhs:&[Mint]) -> Vec<Mint>;
     fn mul(&self, rhs:&[Mint]) -> Vec<Mint>;
     fn mul_const(&self, c:Mint) -> Vec<Mint>;
-    fn inv(&self) -> Vec<Mint>;
+    fn inv(&self, len:usize) -> Vec<Mint>;
     fn bibun(&self) -> Vec<Mint>;
     fn sekibun(&self) -> Vec<Mint>;
     fn log(&self, len:usize) -> Vec<Mint>; 
@@ -101,9 +100,9 @@ impl Fps for [Mint]{
             //ニュートン法 g=g(1-log(g)+f) 精度preL -> L
             //g(-log(g)+f)[preL..L] = (g * (-log(g)+f)[preL..L])[0..L-preL]をgに連結する
             let preL = res.len();
-            let L = (preL*2).min(self.len());
+            let L = (preL*2).min(len);
             res.resize(L,Mint::new(0));
-            let mut rhs = self[..L].sub(&res.log());
+            let mut rhs = self[..L].sub(&res.log(L));
             let mut new = res.mul(&rhs[preL..L]);
             for i in 0..L-preL{
                 res.push(new[i]);
@@ -113,8 +112,8 @@ impl Fps for [Mint]{
     }
 
     //定数項が1
-    fn pow(&self, k:usize) -> Vec<Mint>{
-        (self.log().mul_const(Mint::new(k))).exp() 
+    fn pow(&self, k:usize, len:usize) -> Vec<Mint>{
+        (self.log(len).mul_const(Mint::new(k))).exp(len) 
     }
 
     fn assign(&self, c:Mint) -> Mint{
