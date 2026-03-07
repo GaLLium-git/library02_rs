@@ -101,7 +101,6 @@ impl Fps for [Mint]{
             //g(-log(g)+f)[preL..L] = (g * (-log(g)+f)[preL..L])[0..L-preL]をgに連結する
             let preL = res.len();
             let L = (preL*2).min(len);
-            res.resize(L,Mint::new(0));
             let mut rhs = self[..L].sub(&res.log(L));
             let mut new = res.mul(&rhs[preL..L]);
             for i in 0..L-preL{
