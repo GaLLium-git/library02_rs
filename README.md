@@ -7,4 +7,6 @@ AtCoder上でのコンテスト用のライブラリ
 #### やること
 Manacher  
 binary trie  
-dp
+Aho-Colasick  
+dp  
+beats!
