@@ -9,6 +9,7 @@ use std::collections::*;
 /* 考察
 
 */
+//type Mint = ac_library::ModInt998244353; 
 fn main() {
     let mut sc = Scanner::new();
     let N:usize = sc.next();
