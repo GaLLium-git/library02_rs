@@ -1,5 +1,5 @@
 //正方行列
-type Mint = ac_library::ModInt998244353;
+type Mint = ac_library::ModInt1000000007;
 pub trait Matrix{
     fn one(N:usize) -> Vec<Vec<Mint>>;
     fn mul(&self, B:&Vec<Vec<Mint>>) -> Vec<Vec<Mint>>;
@@ -32,12 +32,12 @@ impl Matrix for Vec<Vec<Mint>>{
     fn pow(&self, mut k:usize) -> Vec<Vec<Mint>>{
         let mut M = self.clone();
         let mut res = Self::one(self.len());
-        while k > 1{
+        while k > 0{
             if (k&1) != 0{
                 res = res.mul(&M)
             }
             k >>= 1;
-            M = M.mul(M);
+            M = M.mul(&M);
         }
         res
     }
