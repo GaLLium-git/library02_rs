@@ -5,8 +5,9 @@ AtCoder上でのコンテスト用のライブラリ
 
 ----
 #### やること
-Manacher  
+Manacher
+dp
+フロー
 binary trie  
 Aho-Colasick  
-dp  
 beats!
